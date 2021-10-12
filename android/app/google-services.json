@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "768462993260",
+    "project_id": "childsafetyapp-d7ce8",
+    "storage_bucket": "childsafetyapp-d7ce8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768462993260:android:818ddd40369fcd5fa02549",
+        "android_client_info": {
+          "package_name": "com.barneyz.childSafety"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768462993260-qvjkul42baeohitrhfqenhlgev2lm48v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTr4T_aSfIZaplfR3mGJWf9VCbAvwJJnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768462993260-qvjkul42baeohitrhfqenhlgev2lm48v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768462993260:android:f2aa495bd598f18da02549",
+        "android_client_info": {
+          "package_name": "com.example.child_safety01"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "768462993260-qvjkul42baeohitrhfqenhlgev2lm48v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTr4T_aSfIZaplfR3mGJWf9VCbAvwJJnk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768462993260-qvjkul42baeohitrhfqenhlgev2lm48v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
