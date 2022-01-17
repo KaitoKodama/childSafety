@@ -6,17 +6,17 @@ workflows:
     environment:
       groups:
       # Add the group environment variables in Codemagic UI (either in Application/Team variables) - https://docs.codemagic.io/variables/environment-variable-groups/
-#        - app_store_credentials # <-- (Includes APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
-          # APP_STORE_CONNECT_ISSUER_ID <-- Put your App Store Connect Issuer Id here 
-          # APP_STORE_CONNECT_KEY_IDENTIFIER <-- Put your App Store Connect Key Identifier here 
-          # APP_STORE_CONNECT_PRIVATE_KEY <-- Put your App Store Connect Private Key here
-#        - certificate_credentials # <-- (Includes CERTIFICATE_PRIVATE_KEY - Put your Certificate Private Key here)
+        - app_store_credentials # <-- (Includes APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
+           APP_STORE_CONNECT_ISSUER_ID "K44GC4BXW9"#<-- Put your App Store Connect Issuer Id here
+           APP_STORE_CONNECT_KEY_IDENTIFIER "PUZFJABSH2" #<-- Put your App Store Connect Key Identifier here
+           APP_STORE_CONNECT_PRIVATE_KEY "PUZFJABSH2"<-- Put your App Store Connect Private Key here
+        - certificate_credentials # <-- (Includes CERTIFICATE_PRIVATE_KEY - Put your Certificate Private Key here)
         - other
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"                
         BUNDLE_ID: "com.barneyz.childSafety" # <-- Put your bundle id here
-#        APP_STORE_ID: 1111111111 # <-- Use the TestFlight Apple id number (An automatically generated ID assigned to your app) found under General > App Information > Apple ID.
+        APP_STORE_ID: 1111111111 # <-- Use the TestFlight Apple id number (An automatically generated ID assigned to your app) found under General > App Information > Apple ID.
       flutter: stable
       xcode: latest
       cocoapods: default
