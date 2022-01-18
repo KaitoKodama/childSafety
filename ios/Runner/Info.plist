@@ -25,14 +25,12 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 
-
 	<key>NSCameraUsageDescription</key>
     <string>Access to take a photo by camera</string>
     <key>NSAppleMusicUsageDescription</key>
     <string>Access to pick a photo</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Access to pick a photo</string>
-
 
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
