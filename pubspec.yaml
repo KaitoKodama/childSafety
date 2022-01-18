@@ -38,7 +38,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "images/device_icon.png"
+  image_path: "images/device_icon02.png"
 
 
 flutter:
