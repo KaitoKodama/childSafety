@@ -1,4 +1,4 @@
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ class MySelfNewsDetailPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: Header(context),
+        appBar: ApplicationHead(context),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

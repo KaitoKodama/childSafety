@@ -1,6 +1,6 @@
 import 'package:child_safety01/rooted/friend/add_friend_id_page.dart';
 import 'package:child_safety01/rooted/friend/add_friend_qr_page.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -17,7 +17,7 @@ class _AddFriendRootPageState extends State<AddFriendRootPage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: Header(context),
+      appBar: ApplicationHead(context),
       body: Container(
         width: MediaQuery.of(context).size.width,
         child: Column(

@@ -1,5 +1,5 @@
 import 'package:child_safety01/rooted/setting/setting_models/contact_model.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,7 @@ class _ContactPageState extends State<ContactPage>{
     return ChangeNotifierProvider<ContactModel>(
         create: (_) => ContactModel(),
         child: Scaffold(
-        appBar: Header(context),
+        appBar: ApplicationHead(context),
           body: Consumer<ContactModel>(
             builder: (context, model, child) {
               return Column(

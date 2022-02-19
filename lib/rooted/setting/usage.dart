@@ -1,4 +1,4 @@
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,7 @@ class _UsagePageState extends State<UsagePage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: Header(context),
+      appBar: ApplicationHead(context),
       body: SingleChildScrollView(
         child: Center(
           child: Column(

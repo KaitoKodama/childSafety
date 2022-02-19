@@ -1,5 +1,5 @@
 import 'package:child_safety01/rooted/friend/friend_models/add_friend_id_model.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,7 +21,7 @@ class _AddFriendIdPageState extends State<AddFriendIdPage>{
     return ChangeNotifierProvider<AddFriendIdModel>(
       create: (_) => AddFriendIdModel(),
       child: Scaffold(
-        appBar: Header(context),
+        appBar: ApplicationHead(context),
         body: Consumer<AddFriendIdModel>(
           builder: (context, model, child){
             return Container(

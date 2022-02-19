@@ -1,232 +1,251 @@
 import 'package:child_safety01/rooted/friend/friend_list_page.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/common.dart';
+import 'package:child_safety01/system/widget.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'friend_models/friend_detail_model.dart';
 
 
 class FriendDetailPage extends StatelessWidget{
   FriendDetailPage(this.targetId);
-  String targetId;
+  final String targetId;
 
   //メインウィジェット
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<FriendDetailModel>(
-      create: (_) => FriendDetailModel()..fetchFriendDetail(targetId),
+      create: (_) => FriendDetailModel()..initFriendDetail(targetId),
       child: Scaffold(
-        appBar: Header(context),
+        appBar: ApplicationHead(context),
         body: Consumer<FriendDetailModel>(
           builder: (context, model, child) {
-            //ローディング時の表示
-            if(model.isLoading){
-              return Container(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(),
-              );
+            switch(model.displayState){
+              case DisplayStateSimple.IsDisable:
+                return buildDisableWidget(context);
+              case DisplayStateSimple.IsEnable:
+                return buildEnableWidget(context, model);
             }
-            //ローディング完了時の表示
-            else{
-              return SingleChildScrollView(
-                child: Column(
+          },
+        ),
+        bottomNavigationBar: ApplicationFoot(),
+      ),
+    );
+  }
+
+  Widget buildDisableWidget(BuildContext context){
+    return BuildWidget().buildLoadingDialog(context);
+  }
+  Widget buildEnableWidget(BuildContext context, FriendDetailModel model){
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+            child: Column(
+              children: [
+                Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15, right: 15),
-                            child: showIconImage(model.friendUserDetail!.userIconPath),
+                      padding: const EdgeInsets.only(right: 15),
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: HexColor('#FFE33F'), width: 1),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: model.friendCompletedInfo.getIconFromPath(),
                           ),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SmallPartsBase().textStyledBoolean(
-                                    model.friendUserDetail!.userName.toString(),
-                                    '名前未設定', Colors.black, 13
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5, right: 15),
-                                  child: SmallPartsBase().textStyledBoolean(model.friendUserDetail!.userComment.toString(), 'コメントが設定されていません', ColorBase().SubGray(), 12),
-                                ),
-                              ],
-                            ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            model.friendCompletedInfo.userName,
+                            style: TextStyle(fontSize: 13,fontFamily: 'MPlus',color: HexColor('#333333')),
+                          ),
+                          Text(
+                            model.friendCompletedInfo.userComment,
+                            style: TextStyle(fontSize: 12,fontFamily: 'MPlus',color: HexColor('#8E8E8E')),
                           ),
                         ],
                       ),
                     ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
-                        child: Text(model.friendUserDetail!.userExplain.toString()),
-                      ),
-                    ),
-                    Container(
-                      color: ColorBase().MainBlue(),
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 15, top: 12, bottom: 12),
-                        child: Text(
-                          'お子さま情報',
-                          style: SmallPartsBase().childBarStyle(),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15, bottom: 25),
+                  child: Text(
+                    model.friendCompletedInfo.userExplain,
+                    style: TextStyle(fontSize: 13,fontFamily: 'MPlusR',color: HexColor('#333333')),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: model.friendCompletedInfo.childInfoList.length,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index){
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 35),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        color: HexColor('#58C1DF'),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5, left: 15),
+                              child: SvgPicture.asset('images/icon_smile.svg'),
+                            ),
+                            Text(
+                              'お子さま情報',
+                              style: TextStyle(fontSize: 16, fontFamily: 'MPlusR', color: HexColor('#FFFFFF')),
+                            )
+                          ],
                         ),
                       ),
                     ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: model.friendChildDetail.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 55, bottom: 20, left: 15),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    showIconImage(model.friendChildDetail[index].childIcon),
-                                    Flexible(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 15, right: 15),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                SmallPartsBase().textStyledBoolean(model.friendChildDetail[index].childName.toString(), '未設定', Colors.black, 13),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(top: 5),
-                                                  child: SmallPartsBase().textStyledBoolean(model.friendChildDetail[index].childBirth.toString(), '未設定', ColorBase().SubGray(), 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                children: [
-                                  childInformation(context, '好きな食べ物', model.friendChildDetail[index].childFavFood.toString()),
-                                  childInformation(context, '嫌いな食べ物', model.friendChildDetail[index].childHateFood.toString()),
-                                  childInformation(context, 'アレルギー', model.friendChildDetail[index].childAllergy.toString()),
-                                  childInformation(context, '性格', model.friendChildDetail[index].childPersonality.toString()),
-                                  childInformation(context, 'その他', model.friendChildDetail[index].childExe.toString()),
-                                ],
-                              ),
-                            ],
-                          );
-                        }
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        width: 95,
+                        height: 95,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: HexColor('#FFE33F'), width: 1),
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: model.friendCompletedInfo.childInfoList[index].getIconFromPath(),
+                          ),
+                        ),
+                      ),
                     ),
-                    deleteFriendButton(model, context),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Container(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 5),
+                          child: Text(
+                              model.friendCompletedInfo.childInfoList[index].childOrderString,
+                              style: TextStyle(fontSize: 14, fontFamily: 'MPlusR', color: HexColor('#FFFFFF'))),
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: HexColor('#1595B9'),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 25, left: 20, right: 20),
+                      child: Text(
+                        model.friendCompletedInfo.childInfoList[index].name,
+                        style: TextStyle(fontSize: 16, fontFamily: 'MPlus', color: HexColor('#333333')),
+                      ),
+                    ),
+                    buildChildItem(
+                        '好きな食べ物',
+                        model.friendCompletedInfo.childInfoList[index].favoriteFood
+                    ),
+                    buildChildItem(
+                        '嫌いな食べ物',
+                        model.friendCompletedInfo.childInfoList[index].hateFood
+                    ),
+                    buildChildItem(
+                        'アレルギー',
+                        model.friendCompletedInfo.childInfoList[index].allergy
+                    ),
+                    buildChildItem(
+                        '性格',
+                        model.friendCompletedInfo.childInfoList[index].personality
+                    ),
+                    buildChildItem(
+                        'その他',
+                        model.friendCompletedInfo.childInfoList[index].etc
+                    ),
                   ],
                 ),
               );
             }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget showIconImage(String? iconPath){
-    return SizedBox(
-      width: 55,
-      height: 55,
-      child: CircleAvatar(
-        radius: 40,
-        backgroundImage: (iconPath!.isNotEmpty)?
-        Image.network(iconPath).image:Image.asset('images/base-icon.png').image,
-      ),
-    );
-  }
-  Widget childInformation(BuildContext context, String title, String content){
-    return Container(
-      decoration: BoxDecoration(
-        border: const Border(
-          top: const BorderSide(
-            color: Colors.black,
-            width: 0.1,
           ),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 15, bottom: 15, left: 15),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-                width: MediaQuery.of(context).size.width*0.3,
-                child: SmallPartsBase().textStyledBoolean(title, '', Colors.black, 14)
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 30, right: 15),
-                child: Text(
-                  (content.isNotEmpty)?content:'-',
-                  style: TextStyle(
-                    fontFamily: 'MPlusR', fontSize: 14, color: Colors.black,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 60),
+            child: SizedBox(
+              width: 200,
+              child: OutlinedButton(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 13, bottom: 13),
+                  child: Text(
+                    'フレンドリスト削除',
+                    style: TextStyle(fontSize: 14, fontFamily: 'MPlusR', color: HexColor('#FFFFFF')),
                   ),
                 ),
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  backgroundColor: HexColor('#1595B9'),
+                  side: BorderSide(color: HexColor('#1595B9')),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
+                ),
+                onPressed: (){
+                  BuildWidget().buildDialog(
+                      'フレンドリスト削除',
+                      model.friendCompletedInfo.userName+'さんをフレンドリストから削除します。よろしいですか？',
+                      '削除する',
+                      context,
+                      (){
+                        Navigator.of(context).pop();
+                        Utility().onFadeNavigator(context, FriendListPage());
+                        model.deleteSelectedFriend(targetId);
+                      }
+                  );
+                },
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget childTitle(String text){
-    return Row(
-      children: [
-        Icon(Icons.bubble_chart),
-        Text(text, style: SmallPartsBase().mainTextStyle()),
-      ],
-    );
-  }
-  Widget childContent(String text){
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Text(
-        (text.length != 0)? text: '',
-        style: SmallPartsBase().mainTextStyle(),
-      ),
-    );
-  }
-
-  Widget deleteFriendButton(FriendDetailModel model, BuildContext context){
-    return SizedBox(
-      width: 220,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 50),
-        child: OutlinedButton(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: SmallPartsBase().textStyledBoolean('フレンドリスト削除', '', Colors.white, 14),
           ),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: ColorBase().MainBlue(),
-            primary: Colors.white,
-            side: BorderSide(color: ColorBase().MainBlue()),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+        ],
+      ),
+    );
+  }
+
+  Widget buildChildItem(String title, String content){
+    return Container(
+      child: Column(
+        children: [
+          DottedLine(
+            dashLength: 5,
+            dashGapLength: 5,
+            dashColor: HexColor('#58C1DF'),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 15, bottom: 15, right: 20, left: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    width: 115,
+                    child: Text(title,style: TextStyle(fontSize: 14, fontFamily: 'MPlus', color: HexColor('#333333')))
+                ),
+                Expanded(
+                  child: Text(content,style: TextStyle(fontSize: 14, fontFamily: 'MPlusR', color: HexColor('#333333'))),
+                ),
+              ],
             ),
           ),
-          onPressed: () async{
-            await model.deleteSelectedFriend(model.friendUserDetail!.userID.toString());
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => FriendListPage()),
-            );
-          },
-        ),
+        ],
       ),
     );
   }

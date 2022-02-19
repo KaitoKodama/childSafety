@@ -1,7 +1,10 @@
 import 'package:child_safety01/rooted/myself/myself_models/myself_edit_model.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/common.dart';
+import 'package:child_safety01/system/widget.dart';
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'myself_models/myself_edit_model.dart';
 
@@ -11,409 +14,327 @@ class MySelfEditPage extends StatefulWidget{
   _MySelfEditPageState createState() => _MySelfEditPageState();
 }
 
-//情報登録・編集画面ページ
 class _MySelfEditPageState extends State<MySelfEditPage>{
-
-  //メインウィジェット
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<MySelfDataEditModel>(
-      create: (_) => MySelfDataEditModel()..fetchCurrentData(),
+      create: (_) => MySelfDataEditModel()..initUserData(),
       child: Scaffold(
-        appBar: Header(context),
+        appBar: ApplicationHead(context),
         body: GestureDetector(
           onTap: (){
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Consumer<MySelfDataEditModel>(
             builder: (context, model, child) {
-              if(!model.isLoading){
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // 自身の写真用コンテナ
-                      createIconImageField(model),
-                      Container(
-                        child: Column(
-                          children: [
-                            createSelfInputField(MyselfEditField.Name, model, '名前', ''),
-                            createSelfInputField(MyselfEditField.Comment, model, '一言\nコメント', ''),
-                            createSelfInputField(MyselfEditField.Introduce, model, '自己紹介', ''),
-                            saveMyselfButton(model),
-                          ],
-                        ),
-                      ),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: model.myselfChildDetail.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                createInfoBar(model, index),
-                                createChildIconImageField(model, index),
-
-                                createChildInputField(index, '名前', '例）【長男】拓哉  ●歳', model, ChildInputState.Name),
-                                createChildInputField(index, 'お誕生日', '例）2020.1.1', model, ChildInputState.Birth),
-                                createChildInputField(index, '好きな食べ物', '例）ハンバーグ、焼き肉', model, ChildInputState.FavFood),
-                                createChildInputField(index, '嫌いな食べ物', '例）ピーマン、ニンジン、焼き魚', model, ChildInputState.HateFood),
-                                createChildInputField(index, 'アレルギー', '※記入、未記入は任意です。', model, ChildInputState.Aller),
-                                createChildInputField(index, '性格', '例）身体を動かす事が大好きで、少々落ち着きがないところもあります。アトピーをもっており肌があまり強くないです。', model, ChildInputState.Person),
-                                createChildInputField(index, 'その他', '例）市販のお菓子は食べさせないようにしています。', model, ChildInputState.Exe),
-
-                                saveMyselfChildButton(model, index),
-                                (index == model.myselfChildDetail.length-1)? addNewChildField(model, index):SizedBox(width: 0,height: 0),
-                              ],
-                            );
-                          }
-                      ),
-                    ],
-                  ),
-                );
-              }
-              else{
-                return Container(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator(),
-                );
+              switch(model.displayState){
+                case DisplayStateSimple.IsDisable:
+                  return buildDisableWidget();
+                case DisplayStateSimple.IsEnable:
+                  return buildEnableWidget(model);
               }
             },
           ),
         ),
+        bottomNavigationBar: ApplicationFoot(),
       ),
     );
   }
 
 
-  //------------------ メインパートの作成 -----------------------
-  Widget createInfoBar(MySelfDataEditModel model, int index){
-    if(index == model.myselfChildDetail.length-1 && index != 0){
-      return Container(
-        color: ColorBase().MainBlue(),
-        alignment: Alignment.centerLeft,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget buildDisableWidget(){
+    return BuildWidget().buildLoadingDialog(context);
+  }
+  Widget buildEnableWidget(MySelfDataEditModel model){
+    return SingleChildScrollView(
+        child:Column(
           children: [
+            buildIconItem(model.userCompletedInfo.getIconFromPath(),() async{
+              await model.getImageProviderFromPickedImage();
+            }),
+            buildInputItem('名前', model.userCompletedInfo.userName, (value){
+              model.userCompletedInfo.userName = value;
+            }),
+            buildInputItem('一言\nコメント', model.userCompletedInfo.userComment, (value){
+              model.userCompletedInfo.userComment = value;
+            }),
+            buildInputItem('自己紹介', model.userCompletedInfo.userExplain, (value){
+              model.userCompletedInfo.userExplain = value;
+            }),
+            buildSaveButtonItem(() async{
+              await model.updateSelfField();
+              BuildWidget().buildDialog('保存完了', 'ご自身のプロフィール保存を完了しました', '戻る', context, (){
+                Navigator.of(context).pop();
+              });
+            }),
             Padding(
-              padding: const EdgeInsets.only(left: 15, top: 12, bottom: 12),
-              child: Text(
-                'お子さま情報 : '+(index+1).toString(),
-                style: SmallPartsBase().childBarStyle(),
+              padding: const EdgeInsets.only(bottom: 90),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: model.userCompletedInfo.childInfoList.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index){
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 55, bottom: 30),
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            color: HexColor('#58C1DF'),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 5, left: 15),
+                                  child: SvgPicture.asset('images/icon_smile.svg'),
+                                ),
+                                Text('お子さま情報',style: TextStyle(fontSize: 16, fontFamily: 'MPlusR', color: HexColor('#FFFFFF')))
+                              ],
+                            ),
+                          ),
+                        ),
+                        buildIconItem(model.userCompletedInfo.childInfoList[index].getIconFromPath(),()async{
+                          await model.getChildImageProviderFromPickedImage(index);
+                        }),
+                        buildInputItem('名前', model.userCompletedInfo.childInfoList[index].name, (value){
+                          model.userCompletedInfo.childInfoList[index].name = value;
+                        }),
+                        DottedLine(
+                          dashLength: 5,
+                          dashGapLength: 5,
+                          dashColor: HexColor('#58C1DF'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: Text('出生順',style: TextStyle(fontSize: 14, color: HexColor('#333333'), fontFamily: 'MPlusR')),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                        children: [
+                                          buildRadioButtonItem(model, index, ChildOrder.male01,'長男'),
+                                          buildRadioButtonItem(model, index, ChildOrder.male02,'次男'),
+                                          buildRadioButtonItem(model, index, ChildOrder.male03,'三男'),
+                                          buildRadioButtonItem(model, index, ChildOrder.male04,'四男'),
+                                          buildRadioButtonItem(model, index, ChildOrder.male05,'五男'),
+                                        ]
+                                    ),
+                                    Row(
+                                        children: [
+                                          buildRadioButtonItem(model, index, ChildOrder.female01,'長女'),
+                                          buildRadioButtonItem(model, index, ChildOrder.female02,'次女'),
+                                          buildRadioButtonItem(model, index, ChildOrder.female03,'三女'),
+                                          buildRadioButtonItem(model, index, ChildOrder.female04,'四女'),
+                                          buildRadioButtonItem(model, index, ChildOrder.female05,'五女'),
+                                        ]
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        buildInputItem('お誕生日', model.userCompletedInfo.childInfoList[index].birth, (value){
+                          model.userCompletedInfo.childInfoList[index].birth = value;
+                        }),
+                        buildInputItem('好きな食べ物', model.userCompletedInfo.childInfoList[index].favoriteFood, (value){
+                          model.userCompletedInfo.childInfoList[index].favoriteFood = value;
+                        }),
+                        buildInputItem('嫌いな食べ物', model.userCompletedInfo.childInfoList[index].hateFood, (value){
+                          model.userCompletedInfo.childInfoList[index].hateFood = value;
+                        }),
+                        buildInputItem('アレルギー', model.userCompletedInfo.childInfoList[index].allergy, (value){
+                          model.userCompletedInfo.childInfoList[index].allergy = value;
+                        }),
+                        buildInputItem('性格', model.userCompletedInfo.childInfoList[index].personality, (value){
+                          model.userCompletedInfo.childInfoList[index].personality = value;
+                        }),
+                        buildInputItem('その他', model.userCompletedInfo.childInfoList[index].etc, (value){
+                          model.userCompletedInfo.childInfoList[index].etc = value;
+                        }),
+                        buildSaveButtonItem(() async{
+                          await model.updateChildField(index);
+                          BuildWidget().buildDialog('保存完了', 'お子さまのプロフィール保存を完了しました', '戻る', context, (){
+                            Navigator.of(context).pop();
+                          });
+                        }),
+                        buildChildOperateButtonItem(SvgPicture.asset('images/icon_child_add.svg'), 'お子さま情報を追加する', (){
+                          BuildWidget().buildDialog('お子さま情報の追加', '新しくお子さま情報を追加しますか？', '追加する', context, (){
+                            Navigator.of(context).pop();
+                            model.addChildMap();
+                          });
+                        },true),
+                        buildChildOperateButtonItem(SvgPicture.asset('images/icon_child_remove.svg'), 'お子さま情報を削除する', (){
+                          String childName = model.userCompletedInfo.childInfoList[index].name;
+                          BuildWidget().buildDialog('お子さま情報の削除', '$childNameをお子さま情報から削除しますか？', '削除する', context, (){
+                            Navigator.of(context).pop();
+                            model.removeChildMap(index);
+                          });
+                        },model.isEnableToRemoveChild()),
+                      ],
+                    );
+                  }
               ),
             ),
+          ],
+        )
+    );
+  }
+
+  Widget buildIconItem(ImageProvider icon, Function onPressed){
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Theme.of(context).canvasColor,
+          side: BorderSide(color: Theme.of(context).canvasColor),
+          splashFactory: NoSplash.splashFactory,
+        ),
+        child: Column(
+          children: [
             Padding(
-              padding: const EdgeInsets.only(right: 15),
-              child: removeLastChildField(model, index),
+              padding: const EdgeInsets.only(bottom: 7),
+              child: Container(
+                width: 95,
+                height: 95,
+                decoration: BoxDecoration(
+                  border: Border.all(color: HexColor('#FFE33F'), width: 2),
+                  shape: BoxShape.circle,
+                  image: DecorationImage(fit: BoxFit.cover, image: icon),
+                ),
+              ),
+            ),
+            Text(
+              '写真を変更',
+              style: TextStyle(fontSize: 13, color: HexColor('#1595B9'), fontFamily: 'MPlusR'),
             ),
           ],
         ),
-      );
-    }
-    else{
-      return Container(
-        color: ColorBase().MainBlue(),
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 15, top: 12, bottom: 12),
-          child: Text(
-            'お子さま情報 : '+(index+1).toString(),
-            style: SmallPartsBase().childBarStyle(),
-          ),
-        ),
-      );
-    }
-  }
-  Widget createIconImageField(MySelfDataEditModel model){
-    return Container(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: const EdgeInsets.only(top:30, bottom: 20),
-        child: OutlinedButton(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: 98,
-                  height: 98,
-                  child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: (model.myselfDetail!.userIconPath!.isNotEmpty)? Image.network(model.myselfDetail!.userIconPath.toString()).image: Image.asset('images/base-icon.png').image
-                  ),
-                ),
-              ),
-              SmallPartsBase().textStyledBoolean('写真を変更', '', ColorBase().MainBlue(), 13),
-            ],
-          ),
-          onPressed: (){
-            model.showSelfImagePicker();
-          },
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: ColorBase().BackGroundColor(context)),
-          ),
-        ),
+        onPressed: ()async{ onPressed(); },
       ),
     );
   }
-
-  Widget createChildIconImageField(MySelfDataEditModel model, int index){
-    return Container(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: const EdgeInsets.only(top:30, bottom: 20),
-        child: OutlinedButton(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: 98,
-                  height: 98,
-                  child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: (model.myselfChildDetail[index].childIcon!.isNotEmpty)? Image.network(model.myselfChildDetail[index].childIcon.toString()).image: Image.asset('images/base-icon.png').image
-                  ),
-                ),
-              ),
-              SmallPartsBase().textStyledBoolean('写真を変更', '', ColorBase().MainBlue(), 13),
-            ],
-          ),
-          onPressed: (){
-            model.showSelfChildImagePicker(index);
-          },
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(color: ColorBase().BackGroundColor(context)),
-          ),
+  Widget buildInputItem(String titleText, String initialText, Function onChanged){
+    return Column(
+      children: [
+        DottedLine(
+          dashLength: 5,
+          dashGapLength: 5,
+          dashColor: HexColor('#58C1DF'),
         ),
-      ),
-    );
-  }
-
-
-  //---------------------------------- 情報入力系インプットフィールド -----------------------------------
-  Widget createSelfInputField(MyselfEditField state, MySelfDataEditModel model, String title, String hint){
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width *0.3,
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 13, left: 15),
-                child: Text(title),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 100,
+                child: Text(titleText,style: TextStyle(fontSize: 14, color: HexColor('#333333'), fontFamily: 'MPlusR')),
               ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width *0.7,
-              child:Padding(
-                padding: const EdgeInsets.only(right: 20),
+              Expanded(
                 child: TextFormField(
                   maxLines: null,
+                  initialValue: initialText!='-'? initialText:null,
                   decoration: InputDecoration(
-                    hintText: hint,
+                    hintText: '-',
+                    hintStyle: TextStyle(fontSize: 14, color: HexColor('#707070'), fontFamily: 'MPlusR'),
+                    counterStyle: TextStyle(fontSize: 14, color: HexColor('#333333'), fontFamily: 'MPlusR'),
                     border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
                   ),
-                  initialValue: model.getMyselfDetailText(state),
-                  onChanged: (text){
-                    model.setMyselfDetailText(state, text);
+                  onChanged: (value)=>{ onChanged(value) },
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildRadioButtonItem(MySelfDataEditModel model, int index, ChildOrder selection, String contentText){
+    return Expanded(
+      child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 7),
+              child: SizedBox(
+                width: 10,
+                height: 10,
+                child: Radio(
+                  fillColor: MaterialStateColor.resolveWith((states) =>  HexColor('#333333')),
+                  groupValue: model.userCompletedInfo.childInfoList[index].orderState,
+                  value: selection,
+                  onChanged: (value){
+                    setState(() {
+                      var order = value as ChildOrder;
+                      model.userCompletedInfo.childInfoList[index].setChildOrderState(order);
+                    });
                   },
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: ColorBase().BorderColor()),
-        ),
+            Text(contentText,style:TextStyle(fontSize: 14, fontFamily: 'MPlusR', color: HexColor('#333333'))),
+          ]
       ),
     );
   }
 
-  Widget createChildInputField(int index, String title, String hint, MySelfDataEditModel model, ChildInputState state){
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width *0.3,
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 40),
-                    child: Text(title),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width *0.7,
-                  child:Padding(
-                    padding: const EdgeInsets.only(right: 40),
-                    child: TextFormField(
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: hint,
-                      ),
-                      initialValue: model.getSpecificChildFieldStr(index, state),
-                      onChanged: (text){
-                        model.setSpecificChildFieldStr(index, text, state);
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: ColorBase().BorderColor()),
-        ),
-      ),
-    );
-  }
-
-
-
-  //--------------------------------- ボタン系ウィジェット -------------------------------------
-  //更新
-  Widget saveMyselfButton(MySelfDataEditModel model){
-    return SizedBox(
-      width: 220,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 50),
-        child: OutlinedButton(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:[
-                SmallPartsBase().textStyledBoolean('保存', '', Colors.white, 14),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: (model.myselfDetail!.isSaved == true)?
-                  Icon(Icons.file_download_done_outlined):Icon(Icons.file_upload_outlined),
-                ),
-              ],
-            ),
-          ),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: ColorBase().MainBlue(),
-            primary: Colors.white,
-            side: BorderSide(color: ColorBase().MainBlue()),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: (){
-            model.updateSelfField();
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget saveMyselfChildButton(MySelfDataEditModel model, int index){
-    return SizedBox(
-      width: 220,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 50),
-        child: OutlinedButton(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children:[
-                SmallPartsBase().textStyledBoolean('保存', '', Colors.white, 14),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5),
-                  child: (model.myselfChildDetail[index].isSaved == true)?
-                    Icon(Icons.file_download_done_outlined):Icon(Icons.file_upload_outlined),
-                ),
-              ],
-            ),
-          ),
-          style: OutlinedButton.styleFrom(
-            backgroundColor: ColorBase().MainBlue(),
-            primary: Colors.white,
-            side: BorderSide(color: ColorBase().MainBlue()),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: (){
-            model.updateChildField(index);
-          },
-        ),
-      ),
-    );
-  }
-
-  //追加・削除
-  Widget addNewChildField(MySelfDataEditModel model, int index){
+  Widget buildSaveButtonItem(Function onSave){
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.only(top: 8),
       child: SizedBox(
-        width: 300,
-        height: 50,
+        width: 100,
+        height: 45,
         child: OutlinedButton(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('お子様を追加する', style: TextStyle(color: Color.fromRGBO(19, 200, 188, 1.0), fontFamily: 'MPlusR', fontSize: 12)),
-              Padding(
-                padding: const EdgeInsets.only(left: 15),
-                child: Icon(Icons.add_circle_outline),
-              ),
-            ],
-          ),
+          child: Text('保存',style: TextStyle(fontSize: 14, color: HexColor('#FFFFFF'), fontFamily: 'MPlusR')),
           style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.white,
-            primary: Color.fromRGBO(19, 200, 188, 1.0),
-            side: BorderSide(color: Color.fromRGBO(19, 200, 188, 1.0)),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
+            backgroundColor: HexColor('#1595B9'),
+            side: BorderSide(color: HexColor('#1595B9')),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
           ),
-          onPressed: () async{
-            model.addChildMap(index);
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MySelfEditPage()));
-          },
+          onPressed: ()async{ onSave(); },
         ),
       ),
     );
   }
-
-  Widget removeLastChildField(MySelfDataEditModel model, int index){
-    return OutlinedButton(
-      child: Row(
-        children: [
-          Text('削除', style: TextStyle(color: Color.fromRGBO(19, 200, 188, 1.0), fontFamily: 'MPlusR', fontSize: 12)),
-          Padding(
-            padding: const EdgeInsets.only(left: 15),
-            child: Icon(Icons.remove_circle),
+  Widget buildChildOperateButtonItem(SvgPicture operateIcon, String operateText, Function onOperate, bool judgement){
+    if(judgement){
+      return Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: OutlinedButton(
+          child: Container(
+            width: 250,
+            height: 50,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Text(operateText,style: TextStyle(fontSize: 12, color: HexColor('#1595B9'),fontFamily: 'MPlus')),
+                ),
+                operateIcon,
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+            ),
           ),
-        ],
-      ),
-      style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        primary: Color.fromRGBO(19, 200, 188, 1.0),
-        side: BorderSide(color: Color.fromRGBO(19, 200, 188, 1.0)),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Theme.of(context).canvasColor,
+            side: BorderSide(color: HexColor('#1595B9')),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60),),
+          ),
+          onPressed: (){ onOperate(); },
         ),
-      ),
-      onPressed: (){
-        model.removeChildMap(index);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => MySelfEditPage()));
-      },
-    );
+      );
+    }
+    else{
+      return Container();
+    }
   }
 }

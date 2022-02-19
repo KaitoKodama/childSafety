@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <g id="グループ_49" data-name="グループ 49" transform="translate(-359 -257)">
+    <rect id="長方形_50" data-name="長方形 50" width="28" height="28" transform="translate(359 257)" fill="none" opacity="0.42"/>
+    <g id="グループ_46" data-name="グループ 46" transform="translate(2 2)">
+      <path id="パス_333" data-name="パス 333" d="M697.87,391.58h-1.13v-5.64a9,9,0,0,0-7.9-8.95v-1.21a1.13,1.13,0,0,0-2.25,0V377a9,9,0,0,0-7.9,8.95v5.64h-1.13a1.13,1.13,0,1,0,0,2.26h5.79a4.51,4.51,0,0,0,8.72,0h5.8a1.13,1.13,0,1,0,0-2.26ZM687.71,395a2.25,2.25,0,0,1-2-1.13h3.9A2.27,2.27,0,0,1,687.71,395Zm6.78-3.39H680.94v-5.64a6.78,6.78,0,0,1,13.55,0Z" transform="translate(-316.43 -116.756)" fill="#333"/>
+      <path id="パス_334" data-name="パス 334" d="M688.84,375.78a1.13,1.13,0,0,0-2.25,0V377h2.25Z" transform="translate(-316.43 -116.756)" fill="#58c1df"/>
+      <g id="楕円形_4" data-name="楕円形 4" transform="translate(374 261)" fill="#e53d3d" stroke="#fff" stroke-width="0.5">
+        <circle cx="4" cy="4" r="4" stroke="none"/>
+        <circle cx="4" cy="4" r="3.75" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

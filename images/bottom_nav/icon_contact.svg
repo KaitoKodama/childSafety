@@ -1,13 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25">
-  <g id="グループ_25" data-name="グループ 25" transform="translate(-1030 552)">
-    <rect id="長方形_31" data-name="長方形 31" width="25" height="25" transform="translate(1030 -552)" fill="none"/>
-    <g id="Page-1" transform="translate(1032.875 -547.5)">
-      <g id="Artboard" transform="translate(1 1)">
-        <g id="mail">
-          <path id="Shape" d="M1.625,0h13A1.63,1.63,0,0,1,16.25,1.625v9.75A1.63,1.63,0,0,1,14.625,13h-13A1.63,1.63,0,0,1,0,11.375V1.625A1.63,1.63,0,0,1,1.625,0Z" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill-rule="evenodd"/>
-          <path id="Shape-2" data-name="Shape" d="M16.25,2,8.125,7.688,0,2" transform="translate(0 -0.375)" fill="none" stroke="#333" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" fill-rule="evenodd"/>
-        </g>
-      </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+  <g id="グループ_97" data-name="グループ 97" transform="translate(-1113 -802)">
+    <rect id="長方形_76" data-name="長方形 76" width="26" height="26" transform="translate(1113 802)" fill="#fff" opacity="0"/>
+    <g id="グループ_90" data-name="グループ 90" transform="translate(-0.999 -0.503)">
+      <path id="パス_369" data-name="パス 369" d="M20.25,125.128l-8.125,5.688L4,125.128" transform="translate(1115 686)" fill="none" stroke="#43abca" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+      <path id="パス_382" data-name="パス 382" d="M5.624,123.5h13a1.631,1.631,0,0,1,1.625,1.625v9.75a1.631,1.631,0,0,1-1.625,1.625h-13A1.631,1.631,0,0,1,4,134.878v-9.75A1.631,1.631,0,0,1,5.624,123.5Z" transform="translate(1115 686)" fill="none" stroke="#262727" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
     </g>
   </g>
 </svg>

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:child_safety01/rooted/friend/add_friend_id_page.dart';
 import 'package:child_safety01/rooted/friend/friend_list_page.dart';
-import 'package:child_safety01/system/system.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';

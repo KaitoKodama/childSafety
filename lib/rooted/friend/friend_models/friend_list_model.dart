@@ -1,129 +1,159 @@
-import 'package:child_safety01/system/inheritance_class.dart';
+import 'package:child_safety01/system/common.dart';
+import 'package:child_safety01/system/widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../friend_list_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../friend_detail_page.dart';
 
 
+/* ---------------------------------------
+ フレンドリストモデル
+---------------------------------------- */
 class FriendListModel extends ChangeNotifier{
   String userid = FirebaseAuth.instance.currentUser!.uid;
   final docSnap = FirebaseFirestore.instance.collection('users');
-
-  List friend = [];
-  List<UserDetail> friendInformation = [];
-
-  bool isLoading = true;
+  List<MasterPartialInfo> friendList = [];
+  DisplayState displayState = DisplayState.IsLoading;
 
 
-  Future fetchFriends() async{
-    final field = await docSnap.doc(userid).get();
-    this.friend = field.get('friend_list').toList();
+  Future initFriendList() async{
+    final document = await docSnap.doc(userid).get();
+    final docList = document.get('friend_list').toList();
 
-    //取得した値を保持するリストを生成する
-    for(var i = 0; i <friend.length; i++){
-      DocumentSnapshot docRef = await FirebaseFirestore.instance.collection('users').doc(friend[i]).get();
-      //ドキュメントが存在する場合のみ追加
+    for(int i=0; i<docList.length; i++){
+      DocumentSnapshot docRef = await FirebaseFirestore.instance.collection('users').doc(docList[i]).get();
       if(docRef.data() != null){
         Map<String, dynamic> mapRef = docRef['user_info'];
-        final info = UserDetail(mapRef);
-        friendInformation.add(info);
+        friendList.add(MasterPartialInfo(mapRef));
       }
     }
-    isLoading = false;
+    if(friendList.length != 0){
+      displayState = DisplayState.FriendExist;
+    }
+    else{
+      displayState = DisplayState.FriendDoesNotExist;
+    }
     notifyListeners();
   }
 
   //フレンドリストからターゲットを削除
   Future deleteFriendFromList(int index) async{
-    String removeTarget = friendInformation[index].userID.toString();
+    String removeTarget = friendList[index].userID.toString();
     await docSnap.doc(userid).update({
       'friend_list': FieldValue.arrayRemove([removeTarget]),
     });
-  }
 
+    friendList.removeAt(index);
+    notifyListeners();
+  }
 }
 
 
-class FriendListSearch extends SearchDelegate<String>{
-  FriendListSearch(this.model): super(searchFieldLabel: '検索');
-  FriendListModel model;
-
-  List<int> displayIndex = [];
-  List nameList = [];
-
-  void setupBuildVariable(){
-    displayIndex = [];
-    nameList = [];
-
-    model.friendInformation.forEach((element) => {
-      nameList.add(element.userName),
+/* ---------------------------------------
+ 検索結果デリゲート
+---------------------------------------- */
+class FriendSearch extends SearchDelegate<String?>{
+  FriendSearch(List<MasterPartialInfo> friendList) :super(
+      searchFieldLabel: "検索",
+      searchFieldStyle: TextStyle(fontSize: 16, fontFamily: 'MPlusR', color: HexColor('#AAAAAA')))
+  {
+    _friendList = friendList;
+    friendList.forEach((element) {
+      _nameList.add(element.userName);
     });
-
-    if(query.isNotEmpty){
-      //クエリに文字列ある場合はそれを含む要素のみを表示
-      for(var i = 0; i<nameList.length; i++){
-        if(nameList[i].toString().contains(query)){
-          displayIndex.add(i);
-        }
-      }
-    }
-    else{
-      //クエリが空の場合は全要素を表示
-      for(var i = 0; i<nameList.length; i++){
-        displayIndex.add(i);
-      }
-    }
   }
+  List<MasterPartialInfo> _friendDisplayExpectList = [];
+  List<MasterPartialInfo> _friendList = [];
+  final List<String> _nameList = [];
 
-
-  //--------- オーバーライド ---------
+  //■ 処理の書き換え
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: (){
-            query = '';
-          }
+    return <Widget>[
+      OutlinedButton(
+        child: Text('キャンセル',style: TextStyle(fontSize: 15, fontFamily: 'MPlusR', color: HexColor('#1595B9'))),
+        style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).canvasColor, width: 0)),
+        onPressed: ()=>{ Navigator.of(context).pop() },
       ),
     ];
   }
-
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.chevron_left),
-      onPressed: (){
-        close(context, '');
-      },
+    return OutlinedButton(
+      child: SvgPicture.asset('images/icon_search.svg'),
+      style: OutlinedButton.styleFrom(side: BorderSide(color: Theme.of(context).canvasColor, width: 0)),
+      onPressed: ()=>{ showResults(context) },
     );
   }
-
   @override
   Widget buildResults(BuildContext context) {
-    if(displayIndex.length <= 0){
-      return Container(
-        alignment: Alignment.center,
-        child: Text(
-          'お名前は見つかりませんでした',
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            fontFamily: 'MPlus',
-          ),
+    observeQueryExist();
+    if(_friendDisplayExpectList.length != 0){
+      return buildFriendListView();
+    }
+    else{
+      return Center(
+        child: Container(
+          child: Text('一致する検索結果はありませんでした'),
         ),
       );
     }
+  }
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    observeQueryExist();
+    if(_friendDisplayExpectList.length != 0){
+      return buildFriendListView();
+    }
     else{
-      setupBuildVariable();
-      return FriendListPageState().createSearchedFriendList(displayIndex, model);
+      return Center(
+        child: Container(
+          child: Text('検索したいユーザーネームを入力してください'),
+        ),
+      );
     }
   }
 
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    setupBuildVariable();
-    return FriendListPageState().createSearchedFriendList(displayIndex, model);
+
+  Widget buildFriendListView(){
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, left: 15, right: 15),
+        child: ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: _friendDisplayExpectList.length,
+            itemBuilder: (context, index){
+              return BuildWidget().buildFriendItem(
+                  context,
+                  _friendDisplayExpectList[index].getIconFromPath(),
+                  _friendDisplayExpectList[index].userName,
+                  _friendDisplayExpectList[index].userComment,
+                  (){
+                    Navigator.of(context).pop();
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FriendDetailPage(_friendDisplayExpectList[index].userID)));
+                  }
+              );
+            }
+        ),
+      ),
+    );
+  }
+  void observeQueryExist(){
+    _friendList.forEach((element) {
+      if(query != ''){
+        if(element.userName.contains(query) && !_friendDisplayExpectList.contains(element)){
+          _friendDisplayExpectList.add(element);
+        }
+        else if(!element.userName.contains(query) && _friendDisplayExpectList.contains(element)){
+          _friendDisplayExpectList.remove(element);
+        }
+      }
+      else{
+        _friendDisplayExpectList.remove(element);
+      }
+    });
   }
 }

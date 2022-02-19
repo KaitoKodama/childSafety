@@ -1,4 +1,4 @@
-import 'package:child_safety01/system/inheritance_class.dart';
+import 'package:child_safety01/system/common.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
