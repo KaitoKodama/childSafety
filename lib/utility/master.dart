@@ -1,0 +1,179 @@
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'enum.dart';
+
+
+/* ---------------------------------------
+ マスター情報
+---------------------------------------- */
+class MasterPartialInfo{
+  MasterPartialInfo(Map<String, dynamic> mapRef){
+    if(mapRef['user_icon'] != ''){
+      this.iconPath = mapRef['user_icon'];
+    }
+    if(mapRef['user_id'] != ''){
+      this.userID = mapRef['user_id'];
+    }
+    if(mapRef['user_name'] != ''){
+      this.userName = mapRef['user_name'];
+    }
+    if(mapRef['user_comment'] != ''){
+      this.userComment = mapRef['user_comment'];
+    }
+    if(mapRef['is_logout'] != ''){
+      this.isLogout = mapRef['is_logout'];
+    }
+  }
+  String userID = '';
+  bool isLogout = false;
+  String iconPath = '';
+  String userName = '-';
+  String userComment = '-';
+  ImageProvider getIconFromPath(){
+    ImageProvider icon;
+    if(iconPath != ''){
+      icon = Image.network(iconPath).image;
+    }
+    else{
+      icon = Image.asset('images/base-icon.png').image;
+    }
+    return icon;
+  }
+}
+
+
+/* ---------------------------------------
+ マスター情報モジュール
+---------------------------------------- */
+class MasterCompletedInfo extends MasterPartialInfo{
+  MasterCompletedInfo(Map<String, dynamic> mapRef, Map<String, dynamic> childMap) : super(mapRef){
+    if(mapRef['user_exp'] != ''){
+      this.userExplain = mapRef['user_exp'];
+    }
+    childMap.forEach((key, value){
+      childInfoList.add(ChildDetail(value, key));
+    });
+  }
+  List<ChildDetail> childInfoList = [];
+  String userExplain = '-';
+  String getLatestID(){
+    List<int> childIDList = [];
+    childInfoList.forEach((element) {
+      childIDList.add(int.parse(element.childID));
+    });
+    String latestID = (childIDList.reduce(max)+1).toString();
+    return latestID;
+  }
+
+  void addChildDetailToList(String targetID){
+    childInfoList.add(ChildDetail({}, targetID));
+  }
+  void removeChildDetailFromListDueToID(String removeID){
+    var removeElement;
+    childInfoList.forEach((element) {
+      if(element.childID == removeID){
+        removeElement = element;
+      }
+    });
+    if(removeElement != null){
+      childInfoList.remove(removeElement);
+    }
+  }
+}
+
+/* ---------------------------------------
+ お子様情報
+---------------------------------------- */
+class ChildDetail{
+  ChildDetail(Map<String, dynamic> mapRef, String childID){
+    this.childID = childID;
+    if(mapRef.isNotEmpty){
+      if(mapRef['child_order'] != ''){
+        orderUnitList.initSelectUnit(mapRef['child_order']);
+      }
+      if(mapRef['child_icon'] != ''){
+        this.iconPath = mapRef['child_icon'];
+      }
+      if(mapRef['child_name'] != ''){
+        this.name = mapRef['child_name'];
+      }
+      if(mapRef['child_birth'] != ''){
+        this.birth = mapRef['child_birth'];
+      }
+      if(mapRef['child_fav'] != ''){
+        this.favoriteFood = mapRef['child_fav'];
+      }
+      if(mapRef['child_hate'] != ''){
+        this.hateFood = mapRef['child_hate'];
+      }
+      if(mapRef['child_aller'] != ''){
+        this.allergy = mapRef['child_aller'];
+      }
+      if(mapRef['child_person'] != ''){
+        this.personality = mapRef['child_person'];
+      }
+      if(mapRef['child_exe'] != ''){
+        this.etc = mapRef['child_exe'];
+      }
+    }
+  }
+  ChildOrderUnitList orderUnitList = new ChildOrderUnitList();
+  String childID = '';
+  String iconPath = '';
+  String name = '-';
+  String birth = '-';
+  String favoriteFood = '-';
+  String hateFood = '-';
+  String allergy = '-';
+  String personality = '-';
+  String etc = '-';
+  ImageProvider getIconFromPath(){
+    ImageProvider _icon = Image.asset('images/base-icon.png').image;
+    if(iconPath != ''){
+      _icon = Image.network(iconPath).image;
+    }
+    return _icon;
+  }
+}
+
+
+/* ---------------------------------------
+ 続き柄ユニット情報
+---------------------------------------- */
+class ChildOrderUnitList{
+  List<ChildOrderUnit> unitList=[
+    ChildOrderUnit('長男', ChildOrder.male01),
+    ChildOrderUnit('次男', ChildOrder.male02),
+    ChildOrderUnit('三男', ChildOrder.male03),
+    ChildOrderUnit('四男', ChildOrder.male04),
+    ChildOrderUnit('五男', ChildOrder.male05),
+    ChildOrderUnit('長女', ChildOrder.female01),
+    ChildOrderUnit('次女', ChildOrder.female02),
+    ChildOrderUnit('三女', ChildOrder.female03),
+    ChildOrderUnit('四女', ChildOrder.female04),
+    ChildOrderUnit('五女', ChildOrder.female05),
+  ];
+  ChildOrderUnit selectUnit = ChildOrderUnit('長男', ChildOrder.male01);
+
+  void initSelectUnit(String name){
+    for(var unit in unitList){
+      if(unit.name == name){
+        selectUnit = unit;
+        return;
+      }
+    }
+  }
+  void setUnitFromEnum(ChildOrder order){
+    for(var unit in unitList){
+      if(unit.order == order){
+        selectUnit = unit;
+        return;
+      }
+    }
+  }
+}
+class ChildOrderUnit{
+  ChildOrderUnit(this.name, this.order);
+  String name;
+  ChildOrder order;
+}

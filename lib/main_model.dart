@@ -1,7 +1,8 @@
-import 'package:child_safety01/system/common.dart';
+import 'package:child_safety01/utility/master.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 enum LoginState{
   Disconnected,

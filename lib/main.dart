@@ -1,12 +1,14 @@
-import 'package:child_safety01/initial/reset_page.dart';
-import 'package:child_safety01/rooted/friend/friend_list_page.dart';
-import 'package:child_safety01/system/common.dart';
-import 'package:child_safety01/system/widget.dart';
+import 'package:child_safety01/pages/friend/friend_list_page.dart';
+import 'package:child_safety01/pages/setting/login_page.dart';
+import 'package:child_safety01/pages/setting/reset_page.dart';
+import 'package:child_safety01/pages/setting/signup_page.dart';
+import 'package:child_safety01/utility/system.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'initial/login_page.dart';
-import 'initial/signup_page.dart';
+import 'component/extends.dart';
+import 'component/widget.dart';
+import 'component/funcwidget.dart';
 import 'main_model.dart';
 
 
@@ -47,13 +49,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: SvgPicture.asset('images/top_logo.svg')),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: BuildWidget().styledButton('新規登録',HexColor('#1595B9'),HexColor('#FFFFFF'),HexColor('#1595B9'),(){
+                child: StyledButton('新規登録',HexColor('#1595B9'),HexColor('#FFFFFF'),HexColor('#1595B9'),(){
                   Navigator.push(context,MaterialPageRoute(builder: (context) => SignupPage()));
                 }),
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: BuildWidget().styledButton('ログイン',HexColor('#FFFFFF'),HexColor('#58C1DF'),HexColor('#58C1DF'), ()async{
+                child: StyledButton('ログイン',HexColor('#FFFFFF'),HexColor('#58C1DF'),HexColor('#58C1DF'), ()async{
                   var state = await MainModel().getLoginState();
                   if (state == LoginState.CompletedLogin) {
                     try{
@@ -61,8 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.push(context,MaterialPageRoute(builder: (context) => FriendListPage()));
                     }
                     catch(exe){
-                      BuildWidget().buildDialog('フィールドの不一致を確認。復旧が必要です', '復旧完了後、再度プロフィール情報を記述ください', '復旧開始', context, () async{
-                        await FitDocumentField().updateRequire();
+                      DisplayDialog('フィールドの不一致を確認。復旧が必要です', '復旧完了後、再度プロフィール情報を記述ください', '復旧開始', context, () async{
+                        await System().resetDocumentField();
                         Navigator.push(context,MaterialPageRoute(builder: (context) => FriendListPage()));
                       });
                     }
@@ -72,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }),
               ),
-              BuildWidget().styledButton('パスワードをお忘れの方はコチラ',HexColor('#FFFFFF'),HexColor('#1595B9'),HexColor('#1595B9'),(){
+              StyledButton('パスワードをお忘れの方はコチラ',HexColor('#FFFFFF'),HexColor('#1595B9'),HexColor('#1595B9'),(){
                 Navigator.push(context,MaterialPageRoute(builder: (context) => ResetPage()));
                 },
               ),
