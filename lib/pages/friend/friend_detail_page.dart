@@ -1,8 +1,9 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_item.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/component/funcwidget.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/models/friend/friend_detail_model.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,25 +40,14 @@ class FriendDetailPage extends StatelessWidget{
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 15, right: 15),
+            padding: const EdgeInsets.only(left: 15, right: 15),
             child: Column(
               children: [
                 Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 15),
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: HexColor('#FFE33F'), width: 1),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: model.friendCompletedInfo.getIconFromPath(),
-                          ),
-                        ),
-                      ),
+                      child: CircleIconItem(60, model.friendCompletedInfo.getIconFromPath()),
                     ),
                     Expanded(
                       child: Column(
@@ -118,18 +108,7 @@ class FriendDetailPage extends StatelessWidget{
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: Container(
-                        width: 95,
-                        height: 95,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: HexColor('#FFE33F'), width: 1),
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: model.friendCompletedInfo.childInfoList[index].getIconFromPath(),
-                          ),
-                        ),
-                      ),
+                      child: CircleIconItem(95, model.friendCompletedInfo.childInfoList[index].getIconFromPath()),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),

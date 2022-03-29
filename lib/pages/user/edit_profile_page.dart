@@ -1,8 +1,9 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_item.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/component/funcwidget.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/models/user/edit_profile_model.dart';
 import 'package:child_safety01/utility/enum.dart';
 import 'package:dotted_line/dotted_line.dart';
@@ -12,12 +13,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 
-class MySelfEditPage extends StatefulWidget{
+class EditProfilePage extends StatefulWidget{
   @override
-  _MySelfEditPageState createState() => _MySelfEditPageState();
+  EditProfilePageState createState() => EditProfilePageState();
 }
 
-class _MySelfEditPageState extends State<MySelfEditPage>{
+class EditProfilePageState extends State<EditProfilePage>{
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<MySelfDataEditModel>(
@@ -154,21 +155,13 @@ class _MySelfEditPageState extends State<MySelfEditPage>{
         ),
         child: Column(
           children: [
+            CircleIconItem(95, icon),
             Padding(
-              padding: const EdgeInsets.only(bottom: 7),
-              child: Container(
-                width: 95,
-                height: 95,
-                decoration: BoxDecoration(
-                  border: Border.all(color: HexColor('#FFE33F'), width: 2),
-                  shape: BoxShape.circle,
-                  image: DecorationImage(fit: BoxFit.cover, image: icon),
-                ),
+              padding: const EdgeInsets.only(top: 7),
+              child: Text(
+                '写真を変更',
+                style: TextStyle(fontSize: 13, color: HexColor('#1595B9'), fontFamily: 'MPlusR'),
               ),
-            ),
-            Text(
-              '写真を変更',
-              style: TextStyle(fontSize: 13, color: HexColor('#1595B9'), fontFamily: 'MPlusR'),
             ),
           ],
         ),

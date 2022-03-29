@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'extends.dart';
+import 'cp_prop.dart';
 
 
 class SplashScreen{
@@ -8,14 +8,23 @@ class SplashScreen{
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => route,
-        transitionsBuilder: (context, animation, secondaryAnimation, child){
-          return FadeTransition(child: child, opacity: animation);
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return route;
+        },
+        transitionDuration: Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final Animatable<double> tween = Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeInOut));
+          final Animation<double> doubleAnimation = animation.drive(tween);
+          return FadeTransition(
+            opacity: doubleAnimation,
+            child: child,
+          );
         },
       ),
     );
   }
 }
+
 
 class DisplayDialog{
   DisplayDialog(String titleText, String contentText, String buttonText, BuildContext context, Function actionTap){

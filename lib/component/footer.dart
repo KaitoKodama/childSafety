@@ -5,7 +5,7 @@ import 'package:child_safety01/pages/user/edit_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../main.dart';
-import 'extends.dart';
+import 'cp_prop.dart';
 
 
 /* ---------------------------------------
@@ -71,10 +71,10 @@ class _ApplicationFoot extends State {
         route = FriendListPage();
         break;
       case FootNavItem.ItemEdit:
-        route = MySelfEditPage();
+        route = EditProfilePage();
         break;
       case FootNavItem.ItemAdd:
-        route = FriendAddPage();
+        route = AddFriendIDPage();
         break;
     }
     SplashScreen(context, route);

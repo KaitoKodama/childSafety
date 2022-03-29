@@ -1,7 +1,8 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_item.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/models/friend/friend_list_model.dart';
 import 'package:child_safety01/utility/enum.dart';
@@ -62,7 +63,7 @@ class FriendListPageState extends State<FriendListPage>{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 20),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Container(
                 width: double.infinity,
                 height: 40,
@@ -119,7 +120,7 @@ class FriendListPageState extends State<FriendListPage>{
                       model.friendList[index].getIconFromPath(),
                       model.friendList[index].userName,
                       model.friendList[index].userComment,(){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => FriendDetailPage(model.friendList[index].userID)));
+                        SplashScreen(context, FriendDetailPage(model.friendList[index].userID));
                       },
                     );
                   }

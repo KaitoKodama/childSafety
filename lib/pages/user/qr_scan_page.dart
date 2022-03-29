@@ -1,6 +1,7 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_button.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/funcwidget.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/models/user/qr_scan_model.dart';
 import 'package:child_safety01/utility/enum.dart';
 import 'package:child_safety01/utility/system.dart';
@@ -9,14 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'add_friend_page.dart';
 
 
-class AddFriendQRPage extends StatefulWidget{
+class QRScanPage extends StatefulWidget{
   @override
-  State<StatefulWidget> createState() => _AddFriendQRPageState();
+  State<StatefulWidget> createState() => QRScanPageState();
 }
-class _AddFriendQRPageState extends State<AddFriendQRPage>{
+class QRScanPageState extends State<QRScanPage>{
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<QRScanModel>(
@@ -63,9 +63,10 @@ class _AddFriendQRPageState extends State<AddFriendQRPage>{
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
-                child: StyledButton('ID検索', HexColor('#FFFFFF'), HexColor('#1595B9'), HexColor('#1595B9'), (){
+                child: StyledButton('戻る', HexColor('#FFFFFF'), HexColor('#1595B9'), HexColor('#1595B9'), (){
                   model.closeCameraAndStream();
-                  SplashScreen(context, FriendAddPage());
+                  Navigator.of(context).pop();
+                  //SplashScreen(context, AddFriendIDPage());
                 }),
               ),
               StyledButton('マイQR', HexColor('#FFFFFF'), HexColor('#1595B9'), HexColor('#1595B9'), (){
@@ -103,9 +104,10 @@ class _AddFriendQRPageState extends State<AddFriendQRPage>{
           if(model.scanBarcode != barcode.code){
             model.scanBarcode = barcode.code;
             RequestUnit requestUnit = await System().getRequestState(model.myFriendList, model.myFriendRequireList, model.scanBarcode);
-            if(requestUnit.requestState != RequestState.Accept){
+            if(requestUnit.requestState == RequestState.Accept){
               DisplayDialog('スキャンを完了しました', requestUnit.logMessage, '決定', context, (){
                 model.saveUIDToBothField();
+                Navigator.of(context).pop();
               });
             }
             else{

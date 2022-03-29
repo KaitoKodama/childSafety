@@ -1,6 +1,7 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_button.dart';
+import 'package:child_safety01/component/cp_input.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/header.dart';
-import 'package:child_safety01/component/widget.dart';
 import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/models/setting/signup_model.dart';
 import 'package:child_safety01/pages/friend/friend_list_page.dart';
@@ -29,7 +30,7 @@ class _SignupPageState extends State<SignupPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                        padding: const EdgeInsets.only(top: 25, bottom: 25),
+                        padding: const EdgeInsets.only(top: 15, bottom: 25),
                         child: Text(
                           'メールアドレスとパスワードを入力して\n新規登録をしてください',
                           textAlign: TextAlign.center,

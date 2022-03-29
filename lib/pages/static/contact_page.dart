@@ -1,4 +1,4 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/models/static/contact_model.dart';
 import 'package:flutter/cupertino.dart';

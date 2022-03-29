@@ -6,8 +6,8 @@ import 'package:child_safety01/utility/system.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'component/extends.dart';
-import 'component/widget.dart';
+import 'component/cp_button.dart';
+import 'component/cp_prop.dart';
 import 'component/funcwidget.dart';
 import 'main_model.dart';
 
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: StyledButton('新規登録',HexColor('#1595B9'),HexColor('#FFFFFF'),HexColor('#1595B9'),(){
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => SignupPage()));
+                  SplashScreen(context, SignupPage());
                 }),
               ),
               Padding(
@@ -60,22 +60,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (state == LoginState.CompletedLogin) {
                     try{
                       await MainModel().onDocumentFieldCheck();
-                      Navigator.push(context,MaterialPageRoute(builder: (context) => FriendListPage()));
+                      SplashScreen(context, FriendListPage());
                     }
                     catch(exe){
                       DisplayDialog('フィールドの不一致を確認。復旧が必要です', '復旧完了後、再度プロフィール情報を記述ください', '復旧開始', context, () async{
                         await System().resetDocumentField();
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => FriendListPage()));
+                        SplashScreen(context, FriendListPage());
                       });
                     }
                   }
                   else {
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => LoginPage()));
+                    SplashScreen(context, LoginPage());
                   }
                 }),
               ),
               StyledButton('パスワードをお忘れの方はコチラ',HexColor('#FFFFFF'),HexColor('#1595B9'),HexColor('#1595B9'),(){
-                Navigator.push(context,MaterialPageRoute(builder: (context) => ResetPage()));
+                SplashScreen(context, ResetPage());
                 },
               ),
             ],

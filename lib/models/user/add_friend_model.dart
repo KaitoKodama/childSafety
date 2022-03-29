@@ -66,6 +66,16 @@ class FriendAddModel extends ChangeNotifier{
     notifyListeners();
   }
 
+  Future rejectAddFriendList(int index) async{
+    await docRef.doc(uid).update({
+      'friend_require': FieldValue.arrayRemove([myPartialRequireList[index].userID]),
+    });
+
+    myPartialRequireList.removeAt(index);
+    notifyListeners();
+  }
+
+
 
   Future copyToClipboard() async{
     final data = ClipboardData(text: uid);

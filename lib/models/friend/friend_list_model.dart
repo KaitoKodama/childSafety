@@ -1,5 +1,5 @@
-import 'package:child_safety01/component/extends.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_item.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/pages/friend/friend_detail_page.dart';
 import 'package:child_safety01/utility/enum.dart';
 import 'package:child_safety01/utility/master.dart';

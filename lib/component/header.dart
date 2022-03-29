@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../main.dart';
-import 'extends.dart';
+import 'cp_prop.dart';
 
 
 /* ---------------------------------------
@@ -20,14 +20,13 @@ import 'extends.dart';
 class ApplicationSimpleHead extends StatelessWidget with PreferredSizeWidget {
   ApplicationSimpleHead(this.context);
   final BuildContext context;
-  final paddingTop = 25.0;
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight+paddingTop);
+  Size get preferredSize => Size.fromHeight(60.0);
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: paddingTop),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
       child: AppBar(
         centerTitle: true,
         elevation: 0,
@@ -51,66 +50,70 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
   final BuildContext context;
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(60.0);
+
   @override
   Widget build(BuildContext context){
-    return AppBar(
-      elevation: 0,
-      backgroundColor: Theme.of(context).canvasColor,
-      automaticallyImplyLeading: false,
-      title: Container(
-        alignment: Alignment.center,
-        child: IconButton(
-            icon: SvgPicture.asset('images/logo_head.svg'),
-            iconSize: 195,
-            onPressed: (){
-              SplashScreen(context, FriendListPage());
-            }
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+      child: AppBar(
+        elevation: 0,
+        backgroundColor: Theme.of(context).canvasColor,
+        automaticallyImplyLeading: false,
+        title: Container(
+          alignment: Alignment.center,
+          child: IconButton(
+              icon: SvgPicture.asset('images/logo_head.svg'),
+              iconSize: 195,
+              onPressed: (){
+                SplashScreen(context, FriendListPage());
+              }
+          ),
         ),
-      ),
-      leading: IconButton(
-        icon: SvgPicture.asset('images/icon_head_back.svg'),
-        onPressed: (){Navigator.pop(context);},
-      ),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 5),
-          child: SizedBox(
-            width: 28,
-            height: 28,
-            child: FutureBuilder(
-                future: switchBellIcon(),
-                builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                  SvgPicture bellIcon = SvgPicture.asset('images/icon_head_bell.svg');
-                  if(snapshot.hasData){
-                    bellIcon = snapshot.data as SvgPicture;
+        leading: IconButton(
+          icon: SvgPicture.asset('images/icon_head_back.svg'),
+          onPressed: (){Navigator.pop(context);},
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: SizedBox(
+              width: 28,
+              height: 28,
+              child: FutureBuilder(
+                  future: switchBellIcon(),
+                  builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
+                    SvgPicture bellIcon = SvgPicture.asset('images/icon_head_bell.svg');
+                    if(snapshot.hasData){
+                      bellIcon = snapshot.data as SvgPicture;
+                    }
+                    return IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: bellIcon,
+                        iconSize: 28,
+                        onPressed: () {
+                          SplashScreen(context, AddFriendIDPage());
+                        }
+                    );
                   }
-                  return IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: bellIcon,
-                      iconSize: 28,
-                      onPressed: () {
-                        SplashScreen(context, FriendAddPage());
-                      }
-                  );
-                }
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 15),
-          child: SizedBox(
-            width: 28,
-            height: 28,
-            child: IconButton(
-                padding: EdgeInsets.zero,
-                icon: SvgPicture.asset('images/icon_head_modal.svg'),
-                iconSize: 28,
-                onPressed: (){buildSettingModalSheet();}
+          Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: SizedBox(
+              width: 28,
+              height: 28,
+              child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: SvgPicture.asset('images/icon_head_modal.svg'),
+                  iconSize: 28,
+                  onPressed: (){buildSettingModalSheet();}
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
@@ -129,7 +132,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
               ),
               buildModalItem('icon_edit.svg','プロフィール編集',()=>{
                 Navigator.pop(context),
-                SplashScreen(context, MySelfEditPage()),
+                SplashScreen(context, EditProfilePage()),
               }),
               buildModalItem('icon_show.svg','友達一覧',()=>{
                 Navigator.pop(context),
@@ -137,7 +140,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
               }),
               buildModalItem('icon_add.svg','友達追加',()=>{
                 Navigator.pop(context),
-                SplashScreen(context, FriendAddPage()),
+                SplashScreen(context, AddFriendIDPage()),
               }),
               buildModalItem('icon_contact.svg','お問い合わせ',()=>{
                 Navigator.pop(context),

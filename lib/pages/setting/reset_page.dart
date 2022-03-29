@@ -1,5 +1,6 @@
-import 'package:child_safety01/component/extends.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_button.dart';
+import 'package:child_safety01/component/cp_input.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/models/setting/reset_model.dart';
@@ -29,7 +30,7 @@ class ResetPageState extends State<ResetPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                        padding: const EdgeInsets.only(top: 25, bottom: 25),
+                        padding: const EdgeInsets.only(top: 15, bottom: 25),
                         child: Text(
                           '新規登録に使用した\nメールアドレスを入力してください',
                           textAlign: TextAlign.center,

@@ -1,8 +1,10 @@
-import 'package:child_safety01/component/extends.dart';
+import 'package:child_safety01/component/cp_button.dart';
+import 'package:child_safety01/component/cp_item.dart';
+import 'package:child_safety01/component/cp_prop.dart';
 import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/component/funcwidget.dart';
-import 'package:child_safety01/component/widget.dart';
+import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/pages/user/qr_scan_page.dart';
 import 'package:child_safety01/utility/enum.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,11 +15,11 @@ import 'package:provider/provider.dart';
 import '../../models/user/add_friend_model.dart';
 
 
-class FriendAddPage extends StatefulWidget{
+class AddFriendIDPage extends StatefulWidget{
   @override
-  FriendAddPageState createState() => FriendAddPageState();
+  AddFriendIDPageState createState() => AddFriendIDPageState();
 }
-class FriendAddPageState extends State<FriendAddPage>{
+class AddFriendIDPageState extends State<AddFriendIDPage>{
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<FriendAddModel>(
@@ -138,27 +140,76 @@ class FriendAddPageState extends State<FriendAddPage>{
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Text('以下のオプションも使用可能です', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 12)),
               ),
-              OutlinedButton(
-                child: Text('QRスキャン'),
-                onPressed: (){
-                  SplashScreen(context, AddFriendQRPage());
-                },
+              Padding(
+                padding: const EdgeInsets.only(bottom: 50),
+                child: ElevatedButton(
+                  child: Row(
+                    children: [
+                      SvgPicture.asset('images/qr_icon.svg', width: 40),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('QRスキャン', style: TextStyle(color: HexColor('#000000'), fontSize: 10, fontFamily: 'MPlusR')),
+                              Text('ライブラリ内のQRコード、またはカメラを使って、フレンドを追加できます', style: TextStyle(color: HexColor('#707070'), fontSize: 10, fontFamily: 'MPlusR')),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Icon(Icons.arrow_forward_ios_rounded, size: 15, color: HexColor('#707070')),
+                    ],
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: HexColor('#F3F7FD'),
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    side: BorderSide(color: HexColor('#F3F7FD')),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  onPressed: (){
+                    SplashScreen(context, QRScanPage());
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 5),
+                child: Text('承認待ちの申請 - ${model.myPartialRequireList.length}', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 12)),
               ),
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: model.myPartialRequireList.length,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index){
-                  return Column(
-                    children: [
-                      Text(model.myPartialRequireList[index].userName),
-                      OutlinedButton(
-                        child: Text('承認'),
-                        onPressed: () async{
-                          await model.acceptAddFriendList(index);
-                        },
-                      )
-                    ],
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: CircleIconItem(60, model.myPartialRequireList[index].getIconFromPath()),
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(model.myPartialRequireList[index].userName, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 13,fontFamily: 'MPlus',color: HexColor('#333333'))),
+                              Text('フレンド申請を承認待ち', overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12,fontFamily: 'MPlus',color: HexColor('#8E8E8E'))),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 5),
+                          child: StyledIconButton(Icon(Icons.person_add_alt_1_rounded, color: Colors.white), 25, HexColor('#1595B9'), ()async{
+                            await model.acceptAddFriendList(index);
+                          }),
+                        ),
+                        StyledIconButton(Icon(Icons.person_remove_alt_1_rounded, color: Colors.white), 25, HexColor('#1595B9'), ()async{
+                          await model.rejectAddFriendList(index);
+                        }),
+                      ],
+                    ),
                   );
                 }
               ),
