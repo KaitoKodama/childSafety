@@ -1,4 +1,6 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'enum.dart';
 
@@ -8,36 +10,51 @@ import 'enum.dart';
 ---------------------------------------- */
 class MasterPartialInfo{
   MasterPartialInfo(Map<String, dynamic> mapRef){
-    if(mapRef['user_icon'] != ''){
-      this.iconPath = mapRef['user_icon'];
-    }
-    if(mapRef['user_id'] != ''){
-      this.userID = mapRef['user_id'];
-    }
-    if(mapRef['user_name'] != ''){
-      this.userName = mapRef['user_name'];
-    }
-    if(mapRef['user_comment'] != ''){
-      this.userComment = mapRef['user_comment'];
-    }
-    if(mapRef['is_logout'] != ''){
-      this.isLogout = mapRef['is_logout'];
-    }
+    virtualInitFixRequireOnlySelfID('user_icon', iconPath,()=>{
+      if(mapRef['user_icon'] != '') this.iconPath = mapRef['user_icon']
+    });
+    virtualInitFixRequireOnlySelfID('user_id', userID,()=>{
+      if(mapRef['user_id'] != '') this.userID = mapRef['user_id']
+    });
+    virtualInitFixRequireOnlySelfID('user_name', userName,()=>{
+      if(mapRef['user_name'] != '') this.userName = mapRef['user_name']
+    });
+    virtualInitFixRequireOnlySelfID('user_comment', userComment,()=>{
+      if(mapRef['user_comment'] != '') this.userComment = mapRef['user_comment']
+    });
+    virtualInitFixRequireOnlySelfID('user_exp', userExplain,()=>{
+      if(mapRef['user_exp'] != '') this.userExplain = mapRef['user_exp']
+    });
+    virtualInitFixRequireOnlySelfID('latest_news', latestNewsID,()=>{
+      if(mapRef['latest_news'] != '') this.latestNewsID = mapRef['latest_news']
+    });
+    virtualInitFixRequireOnlySelfID('is_logout', isLogout,()=>{
+      if(mapRef['is_logout'] != '') this.isLogout = mapRef['is_logout']
+    });
   }
+  final uid = FirebaseAuth.instance.currentUser!.uid;
   String userID = '';
-  bool isLogout = false;
   String iconPath = '';
   String userName = '-';
   String userComment = '-';
+  String userExplain = '-';
+  int latestNewsID = 0;
+  bool isLogout = false;
+  bool isProviding = false;
+
   ImageProvider getIconFromPath(){
-    ImageProvider icon;
-    if(iconPath != ''){
-      icon = Image.network(iconPath).image;
+    if(iconPath != '') return Image.network(iconPath, filterQuality: FilterQuality.low).image;
+    else return Image.asset('images/base-icon.png').image;
+  }
+  Future virtualInitFixRequireOnlySelfID(String targetField, dynamic targetValue, Function tryAction) async{
+    try{ tryAction(); }
+    catch(exe){
+      if(uid == userID && userID != ''){
+        await FirebaseFirestore.instance.collection('users').doc(userID).update({
+          'user_info.$targetField': targetValue,
+        });
+      }
     }
-    else{
-      icon = Image.asset('images/base-icon.png').image;
-    }
-    return icon;
   }
 }
 
@@ -47,15 +64,11 @@ class MasterPartialInfo{
 ---------------------------------------- */
 class MasterCompletedInfo extends MasterPartialInfo{
   MasterCompletedInfo(Map<String, dynamic> mapRef, Map<String, dynamic> childMap) : super(mapRef){
-    if(mapRef['user_exp'] != ''){
-      this.userExplain = mapRef['user_exp'];
-    }
-    childMap.forEach((key, value){
-      childInfoList.add(ChildDetail(value, key));
+    childMap.forEach((childID, map){
+      childInfoList.add(ChildDetail(map, childID));
     });
   }
   List<ChildDetail> childInfoList = [];
-  String userExplain = '-';
   String getLatestID(){
     List<int> childIDList = [];
     childInfoList.forEach((element) {
@@ -88,33 +101,15 @@ class ChildDetail{
   ChildDetail(Map<String, dynamic> mapRef, String childID){
     this.childID = childID;
     if(mapRef.isNotEmpty){
-      if(mapRef['child_order'] != ''){
-        orderUnitList.initSelectUnit(mapRef['child_order']);
-      }
-      if(mapRef['child_icon'] != ''){
-        this.iconPath = mapRef['child_icon'];
-      }
-      if(mapRef['child_name'] != ''){
-        this.name = mapRef['child_name'];
-      }
-      if(mapRef['child_birth'] != ''){
-        this.birth = mapRef['child_birth'];
-      }
-      if(mapRef['child_fav'] != ''){
-        this.favoriteFood = mapRef['child_fav'];
-      }
-      if(mapRef['child_hate'] != ''){
-        this.hateFood = mapRef['child_hate'];
-      }
-      if(mapRef['child_aller'] != ''){
-        this.allergy = mapRef['child_aller'];
-      }
-      if(mapRef['child_person'] != ''){
-        this.personality = mapRef['child_person'];
-      }
-      if(mapRef['child_exe'] != ''){
-        this.etc = mapRef['child_exe'];
-      }
+      if(mapRef['child_order'] != '') orderUnitList.initSelectUnit(mapRef['child_order']);
+      if(mapRef['child_icon'] != '') this.iconPath = mapRef['child_icon'];
+      if(mapRef['child_name'] != '') this.name = mapRef['child_name'];
+      if(mapRef['child_birth'] != '') this.birth = mapRef['child_birth'];
+      if(mapRef['child_fav'] != '') this.favoriteFood = mapRef['child_fav'];
+      if(mapRef['child_hate'] != '') this.hateFood = mapRef['child_hate'];
+      if(mapRef['child_aller'] != '') this.allergy = mapRef['child_aller'];
+      if(mapRef['child_person'] != '') this.personality = mapRef['child_person'];
+      if(mapRef['child_exe'] != '') this.etc = mapRef['child_exe'];
     }
   }
   ChildOrderUnitList orderUnitList = new ChildOrderUnitList();
@@ -127,10 +122,15 @@ class ChildDetail{
   String allergy = '-';
   String personality = '-';
   String etc = '-';
+  bool isProviding = false;
+
   ImageProvider getIconFromPath(){
-    ImageProvider _icon = Image.asset('images/base-icon.png').image;
+    ImageProvider _icon;
     if(iconPath != ''){
-      _icon = Image.network(iconPath).image;
+      _icon = Image.network(iconPath, filterQuality: FilterQuality.low).image;
+    }
+    else{
+      _icon = Image.asset('images/base-icon.png').image;
     }
     return _icon;
   }
@@ -176,4 +176,19 @@ class ChildOrderUnit{
   ChildOrderUnit(this.name, this.order);
   String name;
   ChildOrder order;
+}
+
+
+/* ---------------------------------------
+ ニュースユニット情報
+---------------------------------------- */
+class NewsUnit{
+  NewsUnit(dynamic newsSnap){
+    if(newsSnap['time'] != null) timeStamp = newsSnap['time'];
+    if(newsSnap['title'] != null) title = newsSnap['title'];
+    if(newsSnap['content'] != null) content = newsSnap['content'];
+  }
+  String timeStamp = '';
+  String title = '';
+  String content = '';
 }

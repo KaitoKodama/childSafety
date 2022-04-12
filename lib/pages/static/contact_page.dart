@@ -1,4 +1,6 @@
+import 'package:child_safety01/component/cp_list.dart';
 import 'package:child_safety01/component/cp_prop.dart';
+import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/models/static/contact_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +25,7 @@ class _ContactPageState extends State<ContactPage>{
               return buildScreenWidget(model);
             }
           ),
+          bottomNavigationBar: ApplicationFoot(),
         ),
     );
   }
@@ -30,17 +33,12 @@ class _ContactPageState extends State<ContactPage>{
   Widget buildScreenWidget(ContactModel model){
     return SingleChildScrollView(
       child: Center(
-        child: Container(
-          width: 300,
+        child: Padding(
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 10),
-                  child: Text('お問い合わせはこちら', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 18)),
-                ),
-              ),
+              ListTitle('お問い合わせはこちら'),
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Text('外部リンクへ移動します', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 12)),

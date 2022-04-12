@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                     catch(exe){
                       DisplayDialog('フィールドの不一致を確認。復旧が必要です', '復旧完了後、再度プロフィール情報を記述ください', '復旧開始', context, () async{
-                        await System().resetDocumentField();
+                        await ResetManager().resetDocumentField();
                         SplashScreen(context, FriendListPage());
                       });
                     }

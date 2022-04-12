@@ -1,4 +1,5 @@
 import 'package:child_safety01/component/cp_list.dart';
+import 'package:child_safety01/component/footer.dart';
 import 'package:child_safety01/component/header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +110,7 @@ class _PolicyPageState extends State<PolicyPage>{
           ),
         ),
       ),
+      bottomNavigationBar: ApplicationFoot(),
     );
   }
 }

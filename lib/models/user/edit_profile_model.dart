@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 class MySelfDataEditModel extends ChangeNotifier{
   final userId = FirebaseAuth.instance.currentUser!.uid;
   final docRef = FirebaseFirestore.instance.collection('users');
-  late MasterCompletedInfo userCompletedInfo;
+  late final MasterCompletedInfo userCompletedInfo;
   bool isLoading = true;
 
   Future initUserData() async{
@@ -29,13 +29,14 @@ class MySelfDataEditModel extends ChangeNotifier{
     final pickerFile = await picker.pickImage(source: ImageSource.gallery);
     final pickedFile = File(pickerFile!.path);
 
+    userCompletedInfo.isProviding = true;
+    notifyListeners();
+
     final snap = await FirebaseStorage.instance.ref().child('users_icon/$userId/').putFile(pickedFile);
     final String downloadUrl = await snap.ref.getDownloadURL();
     userCompletedInfo.iconPath = downloadUrl;
 
-    docRef.doc(userId).update({
-      'user_info.user_icon': userCompletedInfo.iconPath,
-    });
+    userCompletedInfo.isProviding = false;
     notifyListeners();
   }
   // ■ チャイルドアイコンの選択・保存
@@ -44,30 +45,32 @@ class MySelfDataEditModel extends ChangeNotifier{
     final pickerFile = await picker.pickImage(source: ImageSource.gallery);
     final pickedFile =  File(pickerFile!.path);
 
+    userCompletedInfo.childInfoList[index].isProviding = true;
+    notifyListeners();
+
     String childID = userCompletedInfo.childInfoList[index].childID;
     final snap = await FirebaseStorage.instance.ref().child('users_icon/children-icon-$userId/$childID').putFile(pickedFile);
     final String downloadUrl = await snap.ref.getDownloadURL();
     userCompletedInfo.childInfoList[index].iconPath = downloadUrl;
 
-    docRef.doc(userId).update({
-      'child_info.$childID.child_icon' : downloadUrl,
-    });
+    userCompletedInfo.childInfoList[index].isProviding = false;
     notifyListeners();
   }
 
   // ■ ユーザー入力内容の保存
   Future updateSelfField() async{
     await docRef.doc(userId).update({
+      'user_info.user_icon': userCompletedInfo.iconPath,
       'user_info.user_comment': userCompletedInfo.userComment,
       'user_info.user_exp': userCompletedInfo.userExplain,
       'user_info.user_name': userCompletedInfo.userName,
-      'user_info.user_icon': userCompletedInfo.iconPath,
     });
   }
   // ■ チャイルド入力内容の保存
   Future updateChildField(int index) async{
     String childID = userCompletedInfo.childInfoList[index].childID;
     await docRef.doc(userId).update({
+      'child_info.$childID.child_icon' : userCompletedInfo.childInfoList[index].iconPath,
       'child_info.$childID.child_order' : userCompletedInfo.childInfoList[index].orderUnitList.selectUnit.name,
       'child_info.$childID.child_name' : userCompletedInfo.childInfoList[index].name,
       'child_info.$childID.child_aller' : userCompletedInfo.childInfoList[index].allergy,
@@ -76,7 +79,6 @@ class MySelfDataEditModel extends ChangeNotifier{
       'child_info.$childID.child_fav' : userCompletedInfo.childInfoList[index].favoriteFood,
       'child_info.$childID.child_hate' : userCompletedInfo.childInfoList[index].hateFood,
       'child_info.$childID.child_person' : userCompletedInfo.childInfoList[index].personality,
-      'child_info.$childID.child_icon' : userCompletedInfo.childInfoList[index].iconPath,
     });
   }
 

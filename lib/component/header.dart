@@ -32,9 +32,9 @@ class ApplicationSimpleHead extends StatelessWidget with PreferredSizeWidget {
         elevation: 0,
         backgroundColor: HexColor('#F3F7FD'),
         automaticallyImplyLeading: false,
-        title: SvgPicture.asset('images/logo_head.svg'),
+        title: SvgPicture.asset('images/header_icons/logo_head.svg'),
         leading: IconButton(
-          icon: SvgPicture.asset('images/icon_head_back.svg'),
+          icon: SvgPicture.asset('images/header_icons/icon_head_back.svg'),
           onPressed: (){Navigator.pop(context);},
         ),
       ),
@@ -63,7 +63,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
         title: Container(
           alignment: Alignment.center,
           child: IconButton(
-              icon: SvgPicture.asset('images/logo_head.svg'),
+              icon: SvgPicture.asset('images/header_icons/logo_head.svg'),
               iconSize: 195,
               onPressed: (){
                 SplashScreen(context, FriendListPage());
@@ -71,7 +71,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
           ),
         ),
         leading: IconButton(
-          icon: SvgPicture.asset('images/icon_head_back.svg'),
+          icon: SvgPicture.asset('images/header_icons/icon_head_back.svg'),
           onPressed: (){Navigator.pop(context);},
         ),
         actions: [
@@ -83,7 +83,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
               child: FutureBuilder(
                   future: switchBellIcon(),
                   builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
-                    SvgPicture bellIcon = SvgPicture.asset('images/icon_head_bell.svg');
+                    SvgPicture bellIcon = SvgPicture.asset('images/header_icons/icon_head_bell.svg');
                     if(snapshot.hasData){
                       bellIcon = snapshot.data as SvgPicture;
                     }
@@ -106,7 +106,7 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
               height: 28,
               child: IconButton(
                   padding: EdgeInsets.zero,
-                  icon: SvgPicture.asset('images/icon_head_modal.svg'),
+                  icon: SvgPicture.asset('images/header_icons/icon_head_modal.svg'),
                   iconSize: 28,
                   onPressed: (){buildSettingModalSheet();}
               ),
@@ -223,10 +223,10 @@ class ApplicationHead extends StatelessWidget with PreferredSizeWidget{
     final docRef = await FirebaseFirestore.instance.collection('users').doc(uid).get();
     final List<dynamic> requestList = await docRef.get('friend_require');
     if(requestList.length == 0){
-      return SvgPicture.asset('images/icon_head_bell.svg');
+      return SvgPicture.asset('images/header_icons/icon_head_bell.svg');
     }
     else{
-      return SvgPicture.asset('images/icon_head_bell_notify.svg');
+      return SvgPicture.asset('images/header_icons/icon_head_bell_notify.svg');
     }
   }
   Future requestLogout() async{

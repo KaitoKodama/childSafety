@@ -6,11 +6,13 @@ import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/models/user/edit_profile_model.dart';
 import 'package:child_safety01/utility/enum.dart';
+import 'package:child_safety01/utility/system.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 class EditProfilePage extends StatefulWidget{
@@ -46,8 +48,14 @@ class EditProfilePageState extends State<EditProfilePage>{
     return SingleChildScrollView(
         child:Column(
           children: [
-            buildIconItem(model.userCompletedInfo.getIconFromPath(),() async{
-              await model.getImageProviderFromPickedImage();
+            buildUserIconItem(model, model.userCompletedInfo.getIconFromPath(), () async{
+              var accept = await PermissionManager().isAcceptThePermission(Permission.mediaLibrary);
+              if(!accept){
+                DisplayDialog('利用許可がありません', '設定画面から写真の利用を許可してください', '設定画面へ', context, (){
+                  openAppSettings();
+                });
+              }
+              else await model.getImageProviderFromPickedImage();
             }),
             buildInputItem('名前', model.userCompletedInfo.userName, (value){
               model.userCompletedInfo.userName = value;
@@ -90,8 +98,14 @@ class EditProfilePageState extends State<EditProfilePage>{
                             ),
                           ),
                         ),
-                        buildIconItem(model.userCompletedInfo.childInfoList[index].getIconFromPath(),()async{
-                          await model.getChildImageProviderFromPickedImage(index);
+                        buildUserChildIconItem(model, index, ()async{
+                          var accept = await PermissionManager().isAcceptThePermission(Permission.mediaLibrary);
+                          if(!accept){
+                            DisplayDialog('利用許可がありません', '設定画面から写真の利用を許可してください', '設定画面へ', context, (){
+                              openAppSettings();
+                            });
+                          }
+                          else await model.getChildImageProviderFromPickedImage(index);
                         }),
                         buildInputItem('名前', model.userCompletedInfo.childInfoList[index].name, (value){
                           model.userCompletedInfo.childInfoList[index].name = value;
@@ -144,6 +158,48 @@ class EditProfilePageState extends State<EditProfilePage>{
     );
   }
 
+  Widget buildUserIconItem(MySelfDataEditModel model, ImageProvider icon, Function onPressed){
+    if(model.userCompletedInfo.isProviding){
+      return buildIconProgress();
+    }
+    else{
+      return buildIconItem(icon, onPressed);
+    }
+  }
+  Widget buildUserChildIconItem(MySelfDataEditModel model, int index, Function onPressed){
+    if(model.userCompletedInfo.childInfoList[index].isProviding){
+      return buildIconProgress();
+    }
+    else{
+      return buildIconItem(model.userCompletedInfo.childInfoList[index].getIconFromPath(), onPressed);
+    }
+  }
+
+  Widget buildIconProgress(){
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Theme.of(context).canvasColor,
+          side: BorderSide(color: Theme.of(context).canvasColor),
+          splashFactory: NoSplash.splashFactory,
+        ),
+        child: Column(
+          children: [
+            CircleIconItemProgress(95),
+            Padding(
+              padding: const EdgeInsets.only(top: 7),
+              child: Text(
+                '写真を変更',
+                style: TextStyle(fontSize: 13, color: HexColor('#1595B9'), fontFamily: 'MPlusR'),
+              ),
+            ),
+          ],
+        ),
+        onPressed: (){},
+      ),
+    );
+  }
   Widget buildIconItem(ImageProvider icon, Function onPressed){
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),

@@ -1,24 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'enum.dart';
 import 'master.dart';
 
 
-class System{
+/*--------------------------------------
+データの初期化
+---------------------------------------*/
+class ResetManager{
   final docRef = FirebaseFirestore.instance.collection('users');
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  //ドキュメントフィールドのリセット
   Future resetDocumentField() async{
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
-      'user_info': {
-        'user_comment': '',
-        'user_exp': '',
-        'user_icon': '',
-        'user_name': '',
-        'user_id': uid,
-        'is_logout': false,
-      },
       'child_info': {
         '0':{
           'child_order':'',
@@ -34,8 +29,16 @@ class System{
       },
     });
   }
+}
 
-  //フレンドリクエストの状態を取得
+
+/*--------------------------------------
+フレンド要請のユニット
+---------------------------------------*/
+class RequestUnitManager{
+  final docRef = FirebaseFirestore.instance.collection('users');
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+
   Future<RequestUnit> getRequestState(List<dynamic> myFriendList, List<dynamic> myRequireList, String searchID) async {
     var targetDoc = await docRef.doc(searchID).get();
     if(!targetDoc.exists){
@@ -57,7 +60,7 @@ class System{
     }
     for(var myFriend in myFriendList){
       if(myFriend.toString() == searchID){
-        return RequestUnit("フレンドリストに追加されています", RequestState.IsInFriendList);
+        return RequestUnit("同一ユーザーが既にフレンドリストに追加されています", RequestState.IsInFriendList);
       }
     }
     final requestTarget = MasterPartialInfo(await targetDoc.get('user_info'));
@@ -73,4 +76,18 @@ class RequestUnit{
   RequestUnit(this.logMessage, this.requestState);
   late String logMessage;
   late RequestState requestState;
+}
+
+
+/*--------------------------------------
+デバイスの許可確認
+---------------------------------------*/
+class PermissionManager{
+  Future<bool> isAcceptThePermission(Permission permission) async {
+    var status = await permission.request();
+    if(status == PermissionStatus.granted){
+      return true;
+    }
+    return false;
+  }
 }

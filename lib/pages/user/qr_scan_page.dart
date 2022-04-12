@@ -20,14 +20,14 @@ class QRScanPageState extends State<QRScanPage>{
   @override
   Widget build(BuildContext context){
     return ChangeNotifierProvider<QRScanModel>(
-      create: (_) => QRScanModel()..initQRScanModel(),
+      create: (_) => QRScanModel()..initQRScanModel(context),
       child: Scaffold(
         body: GestureDetector(
           onTap: (){
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Consumer<QRScanModel>(
-            builder: (context, model, child) {
+            builder: (context, model, child){
               if(!model.isLoading) return buildScreenWidget(model);
               return LoadingScreen();
             },
@@ -103,7 +103,7 @@ class QRScanPageState extends State<QRScanPage>{
         setState(() async{
           if(model.scanBarcode != barcode.code){
             model.scanBarcode = barcode.code;
-            RequestUnit requestUnit = await System().getRequestState(model.myFriendList, model.myFriendRequireList, model.scanBarcode);
+            RequestUnit requestUnit = await RequestUnitManager().getRequestState(model.myFriendList, model.myFriendRequireList, model.scanBarcode);
             if(requestUnit.requestState == RequestState.Accept){
               DisplayDialog('スキャンを完了しました', requestUnit.logMessage, '決定', context, (){
                 model.saveUIDToBothField();

@@ -14,9 +14,9 @@ import 'package:flutter_svg/flutter_svg.dart';
  フレンドリストモデル
 ---------------------------------------- */
 class FriendListModel extends ChangeNotifier{
-  String userid = FirebaseAuth.instance.currentUser!.uid;
+  final userid = FirebaseAuth.instance.currentUser!.uid;
   final docSnap = FirebaseFirestore.instance.collection('users');
-  List<MasterPartialInfo> friendList = [];
+  final List<MasterPartialInfo> friendList = [];
   DisplayState displayState = DisplayState.IsLoading;
 
 

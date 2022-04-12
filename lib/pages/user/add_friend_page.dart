@@ -40,18 +40,12 @@ class AddFriendIDPageState extends State<AddFriendIDPage>{
 
   Widget buildScreenWidget(FriendAddModel model){
     return SingleChildScrollView(
-      child: Center(
-        child: Container(
-          width: 300,
+      child: Padding(
+        padding: const EdgeInsets.all(15),
+        child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 10),
-                  child: Text('MAPAKOにフレンドを追加する', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 18)),
-                ),
-              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 5),
                 child: Text('ユーザーIDで検索・追加', style: TextStyle(color: HexColor('#000000'), fontFamily: 'MPlusR', fontSize: 12)),

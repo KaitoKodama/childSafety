@@ -67,3 +67,21 @@ class CircleIconItem extends StatelessWidget{
     );
   }
 }
+class CircleIconItemProgress extends StatelessWidget{
+  CircleIconItemProgress(this.size);
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      child: CircularProgressIndicator(),
+      margin: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      decoration: BoxDecoration(
+        border: Border.all(color: HexColor('#FFE33F'), width: 1),
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}

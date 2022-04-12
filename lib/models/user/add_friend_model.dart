@@ -83,7 +83,7 @@ class FriendAddModel extends ChangeNotifier{
   }
 
   Future searchFriendID() async {
-    requestUnit = await System().getRequestState(myFriendList, myFriendRequireList, searchText);
+    requestUnit = await RequestUnitManager().getRequestState(myFriendList, myFriendRequireList, searchText);
     notifyListeners();
   }
 
