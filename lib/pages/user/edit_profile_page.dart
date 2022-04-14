@@ -123,7 +123,8 @@ class EditProfilePageState extends State<EditProfilePage>{
                         }),
                         buildSaveButtonItem(() async{
                           await model.updateChildField(index);
-                          DisplayDialog('保存完了', 'お子さまのプロフィール保存を完了しました', '戻る', context, (){
+                          String name = model.userCompletedInfo.childInfoList[index].name;
+                          DisplayDialog('保存完了', '$nameのプロフィール保存を完了しました', '戻る', context, (){
                             Navigator.of(context).pop();
                           });
                         }),
@@ -239,8 +240,8 @@ class EditProfilePageState extends State<EditProfilePage>{
                   maxLines: null,
                   initialValue: initialText!='-'? initialText:null,
                   decoration: InputDecoration(
-                    hintText: '-',
-                    hintStyle: TextStyle(fontSize: 14, color: HexColor('#707070'), fontFamily: 'MPlusR'),
+                    hintText: '$titleTextを入力してください',
+                    hintStyle: TextStyle(fontSize: 14, color: HexColor('#C6C6C6'), fontFamily: 'MPlusR'),
                     counterStyle: TextStyle(fontSize: 14, color: HexColor('#333333'), fontFamily: 'MPlusR'),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
