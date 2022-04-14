@@ -12,3 +12,9 @@ class HexColor extends Color {
   }
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
+
+class ClampValue{
+  double getClampValue(double length, double flexible){
+    return length-flexible*length;
+  }
+}

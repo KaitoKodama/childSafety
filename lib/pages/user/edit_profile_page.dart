@@ -49,13 +49,9 @@ class EditProfilePageState extends State<EditProfilePage>{
         child:Column(
           children: [
             buildUserIconItem(model, model.userCompletedInfo.getIconFromPath(), () async{
-              var accept = await PermissionManager().isAcceptThePermission(Permission.mediaLibrary);
-              if(!accept){
-                DisplayDialog('利用許可がありません', '設定画面から写真の利用を許可してください', '設定画面へ', context, (){
-                  openAppSettings();
-                });
-              }
-              else await model.getImageProviderFromPickedImage();
+              PermissionManager(context, Permission.mediaLibrary, ()async{
+                await model.getImageProviderFromPickedImage();
+              });
             }),
             buildInputItem('名前', model.userCompletedInfo.userName, (value){
               model.userCompletedInfo.userName = value;
@@ -99,13 +95,9 @@ class EditProfilePageState extends State<EditProfilePage>{
                           ),
                         ),
                         buildUserChildIconItem(model, index, ()async{
-                          var accept = await PermissionManager().isAcceptThePermission(Permission.mediaLibrary);
-                          if(!accept){
-                            DisplayDialog('利用許可がありません', '設定画面から写真の利用を許可してください', '設定画面へ', context, (){
-                              openAppSettings();
-                            });
-                          }
-                          else await model.getChildImageProviderFromPickedImage(index);
+                          PermissionManager(context, Permission.mediaLibrary, ()async{
+                            await model.getChildImageProviderFromPickedImage(index);
+                          });
                         }),
                         buildInputItem('名前', model.userCompletedInfo.childInfoList[index].name, (value){
                           model.userCompletedInfo.childInfoList[index].name = value;

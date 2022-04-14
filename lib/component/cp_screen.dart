@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'cp_prop.dart';
 
 
@@ -16,7 +15,7 @@ class LoadingScreen extends StatelessWidget{
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SvgPicture.asset('images/top_logo.svg'),
+              Image.asset('images/top_logo.png'),
               Padding(
                 padding: const EdgeInsets.only(top: 25),
                 child: LinearProgressIndicator(),

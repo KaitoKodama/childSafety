@@ -7,10 +7,12 @@ import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/pages/user/qr_scan_page.dart';
 import 'package:child_safety01/utility/enum.dart';
+import 'package:child_safety01/utility/system.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../models/user/add_friend_model.dart';
 
@@ -163,7 +165,9 @@ class AddFriendIDPageState extends State<AddFriendIDPage>{
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   ),
                   onPressed: (){
-                    SplashScreen(context, QRScanPage());
+                    PermissionManager(context, Permission.camera, ()=>{
+                      SplashScreen(context, QRScanPage()),
+                    });
                   },
                 ),
               ),

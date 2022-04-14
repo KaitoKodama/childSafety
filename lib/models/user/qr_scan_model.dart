@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/utility/system.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,12 +21,6 @@ class QRScanModel extends ChangeNotifier{
     myFriendList = await myDocSnap.get('friend_list');
     myFriendRequireList = await myDocSnap.get('friend_require');
 
-    var accept = await PermissionManager().isAcceptThePermission(Permission.mediaLibrary);
-    if(!accept){
-      DisplayDialog('利用許可がありません', '設定画面からカメラの利用を許可してください', '設定画面へ', context, (){
-        openAppSettings();
-      });
-    }
     isLoading = false;
     notifyListeners();
   }

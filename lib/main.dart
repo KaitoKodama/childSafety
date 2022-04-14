@@ -5,7 +5,6 @@ import 'package:child_safety01/pages/setting/signup_page.dart';
 import 'package:child_safety01/utility/system.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'component/cp_button.dart';
 import 'component/cp_prop.dart';
 import 'component/funcwidget.dart';
@@ -46,7 +45,29 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               Padding(
                   padding: const EdgeInsets.only(bottom: 35),
-                  child: SvgPicture.asset('images/top_logo.svg')),
+                  child: Stack(
+                    children: [
+                      Container(width: 300, height: 225),
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: 0.0, end: 1.0),
+                        duration: const Duration(seconds: 1),
+                        curve: Curves.easeIn,
+                        builder: (BuildContext context, double double, Widget? child) {
+                          return Positioned(
+                            top: ClampValue().getClampValue(10, double),
+                            child: Opacity(
+                              opacity: double,
+                              child: SizedBox(
+                                width: 300,
+                                child: Image.asset('images/top_logo.png'),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 15),
                 child: StyledButton('新規登録',HexColor('#1595B9'),HexColor('#FFFFFF'),HexColor('#1595B9'),(){
