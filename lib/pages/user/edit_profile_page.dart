@@ -49,7 +49,7 @@ class EditProfilePageState extends State<EditProfilePage>{
         child:Column(
           children: [
             buildUserIconItem(model, model.userCompletedInfo.getIconFromPath(), () async{
-              PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
+              await PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
                 await model.getImageProviderFromPickedImage();
               });
             }),
@@ -95,7 +95,7 @@ class EditProfilePageState extends State<EditProfilePage>{
                           ),
                         ),
                         buildUserChildIconItem(model, index, ()async{
-                          PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
+                          await PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
                             await model.getChildImageProviderFromPickedImage(index);
                           });
                         }),
