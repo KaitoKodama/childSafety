@@ -165,8 +165,8 @@ class AddFriendIDPageState extends State<AddFriendIDPage>{
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   ),
                   onPressed: (){
-                    PermissionManager(context, Permission.camera, ()=>{
-                      SplashScreen(context, QRScanPage()),
+                    PermissionManager(context, Permission.camera).permissionHandle((){
+                      SplashScreen(context, QRScanPage());
                     });
                   },
                 ),

@@ -1,4 +1,3 @@
-import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/pages/static/permission_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -91,20 +90,17 @@ class RequestUnit{
 デバイスの許可確認
 ---------------------------------------*/
 class PermissionManager{
-  PermissionManager(this.context, this.permission, this.enable){
-    _permissionHandle();
-  }
+  PermissionManager(this.context, this.permission);
   final BuildContext context;
   final Permission permission;
-  final Function enable;
 
-  Future _permissionHandle() async {
+  Future permissionHandle(Function enable) async {
     var status = await permission.request();
-    if(status.isDenied || status.isPermanentlyDenied){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+    if(status.isGranted){
+      enable();
     }
     else{
-      enable();
+      Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
     }
   }
 }
