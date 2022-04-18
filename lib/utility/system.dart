@@ -1,9 +1,5 @@
-import 'package:child_safety01/pages/static/permission_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'enum.dart';
 import 'master.dart';
 
@@ -43,6 +39,8 @@ class RequestUnitManager{
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<RequestUnit> getRequestState(List<dynamic> myFriendList, List<dynamic> myRequireList, String searchID) async {
+    if(searchID == '') return RequestUnit("ユーザーIDが見つかりませんでした", RequestState.IsNotExist);
+
     try{
       var targetDoc = await docRef.doc(searchID).get();
       if(!targetDoc.exists){
@@ -83,24 +81,4 @@ class RequestUnit{
   RequestUnit(this.logMessage, this.requestState);
   late String logMessage;
   late RequestState requestState;
-}
-
-
-/*--------------------------------------
-デバイスの許可確認
----------------------------------------*/
-class PermissionManager{
-  PermissionManager(this.context, this.permission);
-  final BuildContext context;
-  final Permission permission;
-
-  Future permissionHandle(Function enable) async {
-    var status = await permission.request();
-    if(status.isGranted){
-      enable();
-    }
-    else{
-      Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
-    }
-  }
 }

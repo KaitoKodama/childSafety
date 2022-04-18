@@ -5,6 +5,7 @@ import 'package:child_safety01/component/header.dart';
 import 'package:child_safety01/component/funcwidget.dart';
 import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/models/user/edit_profile_model.dart';
+import 'package:child_safety01/pages/static/permission_page.dart';
 import 'package:child_safety01/utility/enum.dart';
 import 'package:child_safety01/utility/system.dart';
 import 'package:dotted_line/dotted_line.dart';
@@ -49,9 +50,12 @@ class EditProfilePageState extends State<EditProfilePage>{
         child:Column(
           children: [
             buildUserIconItem(model, model.userCompletedInfo.getIconFromPath(), () async{
-              await PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
+              if(await Permission.mediaLibrary.isPermanentlyDenied){
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+              }
+              else{
                 await model.getImageProviderFromPickedImage();
-              });
+              }
             }),
             buildInputItem('名前', model.userCompletedInfo.userName, (value){
               model.userCompletedInfo.userName = value;
@@ -95,9 +99,12 @@ class EditProfilePageState extends State<EditProfilePage>{
                           ),
                         ),
                         buildUserChildIconItem(model, index, ()async{
-                          await PermissionManager(context, Permission.mediaLibrary).permissionHandle(()async{
+                          if(await Permission.mediaLibrary.isPermanentlyDenied){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+                          }
+                          else{
                             await model.getChildImageProviderFromPickedImage(index);
-                          });
+                          }
                         }),
                         buildInputItem('名前', model.userCompletedInfo.childInfoList[index].name, (value){
                           model.userCompletedInfo.childInfoList[index].name = value;
