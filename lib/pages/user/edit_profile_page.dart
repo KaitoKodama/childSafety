@@ -50,11 +50,11 @@ class EditProfilePageState extends State<EditProfilePage>{
         child:Column(
           children: [
             buildUserIconItem(model, model.userCompletedInfo.getIconFromPath(), () async{
-              if(await Permission.mediaLibrary.isPermanentlyDenied){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+              if(await Permission.mediaLibrary.isGranted){
+                await model.getImageProviderFromPickedImage();
               }
               else{
-                await model.getImageProviderFromPickedImage();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
               }
             }),
             buildInputItem('名前', model.userCompletedInfo.userName, (value){
@@ -99,11 +99,11 @@ class EditProfilePageState extends State<EditProfilePage>{
                           ),
                         ),
                         buildUserChildIconItem(model, index, ()async{
-                          if(await Permission.mediaLibrary.isPermanentlyDenied){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+                          if(await Permission.mediaLibrary.isGranted){
+                            await model.getChildImageProviderFromPickedImage(index);
                           }
                           else{
-                            await model.getChildImageProviderFromPickedImage(index);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
                           }
                         }),
                         buildInputItem('名前', model.userCompletedInfo.childInfoList[index].name, (value){

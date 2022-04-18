@@ -166,11 +166,11 @@ class AddFriendIDPageState extends State<AddFriendIDPage>{
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                   ),
                   onPressed: () async{
-                    if(await Permission.camera.isPermanentlyDenied){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
+                    if(await Permission.camera.isGranted){
+                      SplashScreen(context, QRScanPage());
                     }
                     else{
-                      SplashScreen(context, QRScanPage());
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => PermissionPage()));
                     }
                   },
                 ),
