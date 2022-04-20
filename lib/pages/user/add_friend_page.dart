@@ -8,7 +8,6 @@ import 'package:child_safety01/component/cp_screen.dart';
 import 'package:child_safety01/pages/static/permission_page.dart';
 import 'package:child_safety01/pages/user/qr_scan_page.dart';
 import 'package:child_safety01/utility/enum.dart';
-import 'package:child_safety01/utility/system.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

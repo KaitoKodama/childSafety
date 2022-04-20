@@ -8,6 +8,7 @@ class FriendDetailModel extends ChangeNotifier{
   late MasterCompletedInfo friendCompletedInfo;
   bool isLoading = true;
 
+  //TODO 例外処理：Exceptionを検知した場合に違うページ(アップデートしてないよ)に遷移
   Future initFriendDetail(String targetId) async{
     final targetDoc = await FirebaseFirestore.instance.collection('users').doc(targetId).get();
     final Map<String, dynamic> targetMap = await targetDoc.get('user_info');
@@ -25,7 +26,4 @@ class FriendDetailModel extends ChangeNotifier{
       'friend_list': FieldValue.arrayRemove([targetId]),
     });
   }
-}
-
-class DisplayStateSimple {
 }

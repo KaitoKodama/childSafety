@@ -11,6 +11,7 @@ enum LoginState{
 }
 class MainModel{
 
+  // TODO ステート確認中はプログレスバーを追加
   Future<LoginState> getLoginState() async{
     FirebaseAuth auth = FirebaseAuth.instance;
     Connectivity connectivity = Connectivity();
@@ -31,6 +32,7 @@ class MainModel{
     return loginState;
   }
 
+  // TODO ログインのローディング時間削減のためにここは削除
   Future onDocumentFieldCheck() async{
     final userId = FirebaseAuth.instance.currentUser!.uid;
     final docRef = FirebaseFirestore.instance.collection('users');
